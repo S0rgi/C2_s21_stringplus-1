@@ -8,9 +8,93 @@ void memcmp_test();
 void strlen_test();
 void strcmp_test();
 void s21_strchr_test();
+void null_test();
+void size_t_test();
+void strstr_test();
+void strncpy_test();
+void memcpy_test();
+void memset_test();
+void strcat_test();
+void s21_strrchr_test();
 int main() {
-  s21_strchr_test();
+  s21_strrchr_test();
   return 0;
+}
+void s21_strrchr_test() {
+  char str1[] = "Hellol";
+  char *result1 = s21_strrchr(str1, (int)'o');
+  char *result2 = strrchr(str1, (int)'o');
+
+  if (result1 != NULL) {
+    printf("s21_strchr found: %s\n", result1);
+  } else {
+    printf("s21_strchr did not find 'o'\n");
+  }
+  if (result2 != NULL) {
+    printf("strchr found: %s\n", result2);
+  } else {
+    printf("strchr did not find 'o'\n");
+  }
+}
+void strcat_test() {
+  char dest1[20] = "Hello ";
+  char dest2[20] = "Hello ";
+  const char *str = "world";
+
+  s21_strncat(dest1, str, 5);
+  strncat(dest2, str, 5);
+
+  // Print results
+  printf("Custom strcat result: %s\n", dest1);
+  printf("Standard strcat result: %s\n", dest2);
+}
+void memset_test() {
+  char buffer1[20];
+  char buffer2[20];
+  s21_memset(buffer1, 'A', sizeof(buffer1) - 1);
+  memset(buffer2, 'A', sizeof(buffer2) - 1);
+  buffer1[sizeof(buffer1) - 1] = '\0';
+  buffer2[sizeof(buffer1) - 1] = '\0';
+
+  printf("Buffer after memset: %s\n", buffer1);
+  printf("Buffer after memset: %s\n", buffer2);
+}
+void memcpy_test() {
+  char src[] = "Hello, world!";
+  char dest1[s21_strlen(src)];
+  char dest2[strlen(src)];
+  s21_memcpy(dest1, src, sizeof(src));
+  memcpy(dest2, src, sizeof(src));
+  printf("Destination after memcpy: %s\n", dest1);
+  printf("Destination after memcpy: %s\n", dest2);
+}
+void strncpy_test() {
+  char str[] = "Hellol";
+  char dest[s21_strlen(str)];
+  char *result1 = s21_strncpy(dest, str, 5);
+  char *result2 = s21_strncpy(dest, str, 5);
+  if (result1 != NULL) {
+    printf("dest : %s\n", result1);
+  } else {
+    printf("NULL\n");
+  }
+  if (result2 != NULL) {
+    printf("dest : %s\n", result2);
+  } else {
+    printf("NULL\n");
+  }
+}
+void null_test() {
+  if (s21_NULL == NULL)
+    printf("SUCCESS\n");
+  else
+    printf("FAIL\n");
+}
+void size_t_test() {
+  if (sizeof(size_t) == sizeof(s21_size_t))
+    printf("SUCCESS\n");
+  else
+    printf("FAIL\n");
 }
 void memcmp_test() {
   char str1[] = "Hellol";
@@ -67,5 +151,22 @@ void s21_strchr_test() {
     printf("strchr found: %s\n", result2);
   } else {
     printf("strchr did not find 'o'\n");
+  }
+}
+void strstr_test() {
+  const char *haystack = "Hello, world!";
+  const char *needle = "world";
+
+  char *result1 = s21_strstr(haystack, needle);
+  char *result2 = strstr(haystack, needle);
+  if (result1 != s21_NULL) {
+    printf("Found substring: %s\n", result1);
+  } else {
+    printf("Substring not found.\n");
+  }
+  if (result2 != s21_NULL) {
+    printf("Found substring: %s\n", result2);
+  } else {
+    printf("Substring not found.\n");
   }
 }

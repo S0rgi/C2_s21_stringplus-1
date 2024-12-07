@@ -16,9 +16,30 @@ int s21_memcmp(const void *str1, const void *str2, s21_size_t n) {
   }
   return result;
 }
-//    void *s21_memcpy(void *dest, const void *src, size_t n){}
-//    void *s21_memset(void *str, int c, size_t n){}
-//    char *s21_strncat(char *dest, const char *src, size_t n){}
+void *s21_memcpy(void *dest, const void *src, s21_size_t n) {
+  unsigned char *d = (unsigned char *)dest;
+  const unsigned char *s = (const unsigned char *)src;
+  for (s21_size_t i = 0; i < n; i++) {
+    d[i] = s[i];
+  }
+
+  return dest;
+}
+void *s21_memset(void *str, int c, s21_size_t n) {
+  unsigned char *s = (unsigned char *)str;
+  for (s21_size_t i = 0; i < n; i++) {
+    s[i] = (unsigned char)c;
+  }
+  return str;
+}
+char *s21_strncat(char *dest, const char *src, s21_size_t n) {
+  s21_size_t dest_len = s21_strlen(dest);
+  for (s21_size_t i = 0; i < n && src[i] != '\0'; i++) {
+    dest[dest_len + i] = src[i];
+  }
+  dest[dest_len + n] = '\0';
+  return dest;
+}
 char *s21_strchr(const char *str, int c) {
   return (char *)s21_memchr(str, c, s21_strlen(str) + 1);
 }
@@ -41,7 +62,15 @@ int s21_strncmp(const char *str1, const char *str2, s21_size_t n) {
   return result;
 }
 
-//    char *s21_strncpy(char *dest, const char *src, s21_size_t n){}
+char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
+  if (src == s21_NULL) {
+    return s21_NULL;
+  }
+  for (s21_size_t i = 0; src[i] && i < n; i++) {
+    dest[i] = src[i];
+  }
+  return dest;
+}
 //    s21_size_t s21_strcspn(const char *str1, const char *str2){}
 //    char *s21_strerror(int errnum){}
 
@@ -56,8 +85,34 @@ s21_size_t s21_strlen(const char *str) {
 }
 
 //    char *s21_strpbrk(const char *str1, const char *str2){}
-//    char *s21_strrchr(const char *str, int c){}
-//    char *s21_strstr(const char *haystack, const char *needle){}
+char *s21_strrchr(const char *str, int c) {
+  char *result = s21_NULL;
+  for (s21_size_t i = 0; str[i] != '\0'; i++) {
+    if (str[i] == (unsigned char)c) result = (char *)(str + i);
+  }
+  return result;
+}
+char *s21_strstr(const char *haystack, const char *needle) {
+  if (*needle == '\0') {
+    return (char *)haystack;
+  }
+  s21_size_t needle_len = s21_strlen(needle);
+  s21_size_t haystack_len = s21_strlen(haystack);
+  char *result = s21_NULL;
+
+  for (s21_size_t i = 0; i <= haystack_len - needle_len; i++) {
+    int match = 1;
+    for (s21_size_t j = 0; j < needle_len && match; j++) {
+      if (haystack[i + j] != needle[j]) {
+        match = 0;
+      }
+    }
+    if (match) {
+      result = (char *)(haystack + i);
+    }
+  }
+  return result;
+}
 //    char *s21_strtok(char *str, const char *delim){}
 //    int sscanf(const char *str, const char *format, ...){}
 // dop 2

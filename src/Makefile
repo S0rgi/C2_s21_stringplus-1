@@ -3,6 +3,7 @@ CFLAGS = -Wall -Werror -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L  -lm  -pedanti
 LIB_NAME = s21_string
 
 all: clean clang $(LIB_NAME).a test
+	./test.out
 clean:
 	rm -rf *.o *.a *.out
 test: $(LIB_NAME).a

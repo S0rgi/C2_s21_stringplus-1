@@ -18,9 +18,32 @@ void strcat_test();
 void s21_strrchr_test();
 void s21_to_upper_test();
 void s21_to_lower_test();
+void s21_strcspn_test();
+void strpbrk_test();
 int main() {
-  s21_to_lower_test();
+  strpbrk_test();
   return 0;
+}
+
+void strpbrk_test() {
+  const char *str1 = "hello";
+  const char *str2 = "l";
+
+  char *result_custom = s21_strpbrk(str1, str2);
+  char *result_standard = strpbrk(str1, str2);
+
+  printf("Custom strpbrk result: %s\n", result_custom ? result_custom : "NULL");
+  printf("Standard strpbrk result: %s\n",
+         result_standard ? result_standard : "NULL");
+}
+void s21_strcspn_test() {
+  const char *str1 = "Hello, World!";
+  const char *str2 = "aeiou";
+
+  s21_size_t result1 = s21_strcspn(str1, str2);
+  s21_size_t result2 = strcspn(str1, str2);
+  printf("Length of initial segment: %lu\n", result1);
+  printf("Length of initial segment: %lu\n", result2);
 }
 void s21_to_lower_test() {
   const char *str = "Hello, World!";
@@ -68,7 +91,6 @@ void strcat_test() {
   s21_strncat(dest1, str, 5);
   strncat(dest2, str, 5);
 
-  // Print results
   printf("Custom strcat result: %s\n", dest1);
   printf("Standard strcat result: %s\n", dest2);
 }

@@ -69,18 +69,32 @@ int s21_strncmp(const char *str1, const char *str2, s21_size_t n) {
 
 char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
   if (src == s21_NULL) {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return s21_NULL;
   }
-  for (s21_size_t i = 0; src[i] && i < n; i++) {
+  for (s21_size_t i = 0; i < n &&src[i]; i++) {
     dest[i] = src[i];
   }
   return dest;
 }
-//    s21_size_t s21_strcspn(const char *str1, const char *str2){}
+s21_size_t s21_strcspn(const char *str1, const char *str2) {
+  s21_size_t result = 0;
+  int found = 0;
+
+  for (s21_size_t i = 0; !found && i < s21_strlen(str1); i++) {
+    if (s21_strchr(str2, str1[i]) != s21_NULL) {
+      found = 1;
+    }
+    if (!found) result++;
+  }
+  return result;
+}
+
 //    char *s21_strerror(int errnum){}
 
 s21_size_t s21_strlen(const char *str) {
   if (str == s21_NULL) {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return 0;
   }
   s21_size_t i = 0;
@@ -89,7 +103,13 @@ s21_size_t s21_strlen(const char *str) {
   return i;
 }
 
-//    char *s21_strpbrk(const char *str1, const char *str2){}
+char *s21_strpbrk(const char *str1, const char *str2) {
+  char *result = s21_NULL;
+  for (s21_size_t i = 0; result == s21_NULL && i < s21_strlen(str1); i++) {
+    if (s21_strchr(str2, str1[i])) result = (char *)(str1 + i);
+  }
+  return result;
+}
 char *s21_strrchr(const char *str, int c) {
   char *result = s21_NULL;
   for (s21_size_t i = 0; str[i] != '\0'; i++) {
@@ -99,6 +119,7 @@ char *s21_strrchr(const char *str, int c) {
 }
 char *s21_strstr(const char *haystack, const char *needle) {
   if (*needle == '\0') {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return (char *)haystack;
   }
   s21_size_t needle_len = s21_strlen(needle);
@@ -125,6 +146,7 @@ char *s21_strstr(const char *haystack, const char *needle) {
 // dop 3
 void *s21_to_upper(const char *str) {
   if (str == s21_NULL) {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return s21_NULL;
   }
   s21_size_t len = s21_strlen(str);
@@ -145,6 +167,7 @@ void *s21_to_upper(const char *str) {
 }
 void *s21_to_lower(const char *str) {
   if (str == s21_NULL) {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return s21_NULL;
   }
   s21_size_t len = s21_strlen(str);

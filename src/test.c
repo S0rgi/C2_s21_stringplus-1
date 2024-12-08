@@ -16,9 +16,33 @@ void memcpy_test();
 void memset_test();
 void strcat_test();
 void s21_strrchr_test();
+void s21_to_upper_test();
+void s21_to_lower_test();
 int main() {
-  s21_strrchr_test();
+  s21_to_lower_test();
   return 0;
+}
+void s21_to_lower_test() {
+  const char *str = "Hello, World!";
+  char *upper_str = (char *)s21_to_lower(str);
+  if (upper_str != NULL) {
+    printf("Original: %s\n", str);
+    printf("Upper: %s\n", upper_str);
+    free(upper_str);
+  } else {
+    printf("Memory allocation failed\n");
+  }
+}
+void s21_to_upper_test() {
+  const char *str = "Hello, World!";
+  char *upper_str = (char *)s21_to_upper(str);
+  if (upper_str != NULL) {
+    printf("Original: %s\n", str);
+    printf("Upper: %s\n", upper_str);
+    free(upper_str);
+  } else {
+    printf("Memory allocation failed\n");
+  }
 }
 void s21_strrchr_test() {
   char str1[] = "Hellol";

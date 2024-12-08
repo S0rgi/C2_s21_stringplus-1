@@ -2,10 +2,15 @@
 
 void *s21_memchr(const void *str, int c, s21_size_t n) {
   const unsigned char *ptr = (const unsigned char *)str;
+  void *result = s21_NULL;
+
   for (s21_size_t i = 0; i < n; i++) {
-    if (ptr[i] == (unsigned char)c) return (void *)(ptr + i);
+    if (ptr[i] == (unsigned char)c) {
+      result = (void *)(ptr + i);
+    }
   }
-  return s21_NULL;
+
+  return result;
 }
 int s21_memcmp(const void *str1, const void *str2, s21_size_t n) {
   int result = 0;
@@ -118,7 +123,45 @@ char *s21_strstr(const char *haystack, const char *needle) {
 // dop 2
 //    int sprintf(char *str, const char *format, ...){}
 // dop 3
-//    void *s21_to_upper(const char *str){}
-//    void *s21_to_lower(const char *str){}
+void *s21_to_upper(const char *str) {
+  if (str == s21_NULL) {
+    return s21_NULL;
+  }
+  s21_size_t len = s21_strlen(str);
+  char *dup = (char *)malloc((len + 1) * sizeof(char));
+  void *result = s21_NULL;
+  if (dup != s21_NULL) {
+    for (s21_size_t i = 0; i < len; i++) {
+      if (str[i] >= 'a' && str[i] <= 'z') {
+        dup[i] = str[i] - 32;
+      } else {
+        dup[i] = str[i];
+      }
+    }
+    dup[len] = '\0';
+    result = (void *)dup;
+  }
+  return result;
+}
+void *s21_to_lower(const char *str) {
+  if (str == s21_NULL) {
+    return s21_NULL;
+  }
+  s21_size_t len = s21_strlen(str);
+  char *dup = (char *)malloc((len + 1) * sizeof(char));
+  void *result = s21_NULL;
+  if (dup != s21_NULL) {
+    for (s21_size_t i = 0; i < len; i++) {
+      if (str[i] >= 'A' && str[i] <= 'Z') {
+        dup[i] = str[i] + 32;
+      } else {
+        dup[i] = str[i];
+      }
+    }
+    dup[len] = '\0';
+    result = (void *)dup;
+  }
+  return result;
+}
 //    void *s21_insert(const char *src, const char *str, size_t start_index){}
 //   void *s21_trim(const char *src, const char *trim_chars){}

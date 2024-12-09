@@ -1,26 +1,21 @@
+ifeq ($(origin CC), default)
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L  -lm  -pedantic
-LIB_NAME = s21_string
+endif
 
-all: clean clang $(LIB_NAME).a test
-	./test.out
+TARGET ?= ../src
+
+CFLAGS ?= -Wall -Werror -Wextra -std=c11
+
+SRC_TEST = s21_string.c strtok_test.c
+
+OBJ_TEST = $(SRC_TEST:.c=.o)
+
+.PHONY: s21_strtok_test
+s21_strtok_test: $(TARGET)/s21_strtok_test
+
+$(TARGET)/%: $(OBJ_TEST)
+	$(CC) $^ -o $@
+
+.PHONY: clean
 clean:
-	rm -rf *.o *.a *.out
-test: $(LIB_NAME).a
-	$(CC) $(CFLAGS) test.c -L. $(LIB_NAME).a -o test.out
-$(LIB_NAME).a: $(LIB_NAME).o
-	 ar rcs $(LIB_NAME).a $(LIB_NAME).o
-$(LIB_NAME).o: $(LIB_NAME).c
-	$(CC) $(CFLAGS) -c $(LIB_NAME).c -o $(LIB_NAME).o
-cpp:
-	cppcheck --enable=all --suppress=checkersReport --suppress=missingIncludeSystem *.c
-clang:
-	cp ../materials/linters/.clang-format ./
-	clang-format -n *.c *.h
-	clang-format -i *.c *.h
-	rm -rf .clang-format
-val:test
-	valgrind --tool=memcheck --leak-check=yes  ./test.out
-lint:
-	s21lint *.c *.h
-gcov_report:
+	rm -rf $(OBJ_TEST) $(TARGET)/s21_strtok_test

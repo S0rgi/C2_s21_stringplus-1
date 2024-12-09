@@ -72,7 +72,7 @@ char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
     //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
     return s21_NULL;
   }
-  for (s21_size_t i = 0; i < n &&src[i]; i++) {
+  for (s21_size_t i = 0; i < n && src[i]; i++) {
     dest[i] = src[i];
   }
   return dest;
@@ -139,11 +139,43 @@ char *s21_strstr(const char *haystack, const char *needle) {
   }
   return result;
 }
-//    char *s21_strtok(char *str, const char *delim){}
+
+char* s21_strtok(char *str, const char *delim) {
+  static char* str_stat;
+  char* token;
+
+  if (!str) {
+    if (!str_stat) {
+      return NULL;
+    } else {
+      str = str_stat;
+    }
+  }
+
+  str += s21_strspn(str, delim);
+
+  if (!str) {
+    str_stat = str;
+    token = NULL;
+  } else {
+    token = str;
+    str = s21_strpbrk(token, delim);
+    if (!str) {
+      str_stat = NULL;
+    } else {
+      *str = '\0';
+      str_stat = str + 1;
+    }
+  }
+
+  return token;
+}
+
 //    int sscanf(const char *str, const char *format, ...){}
 // dop 2
 //    int sprintf(char *str, const char *format, ...){}
 // dop 3
+
 void *s21_to_upper(const char *str) {
   if (str == s21_NULL) {
     //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.

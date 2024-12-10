@@ -91,7 +91,18 @@ s21_size_t s21_strcspn(const char *str1, const char *str2) {
   return result;
 }
 
-//    char *s21_strerror(int errnum){}
+char *s21_strerror(int errnum) {
+  static char *error_messages[] = ERRORS;
+  static int error_list_length =
+      sizeof(error_messages) / sizeof(error_messages[0]);
+  printf("length : %d\n", error_list_length);
+
+  if (errnum < 0 || errnum > error_list_length) {
+    return "Unknown error";
+  }
+
+  return (char *)error_messages[errnum];
+}
 
 s21_size_t s21_strlen(const char *str) {
   if (str == s21_NULL) {
@@ -142,11 +153,41 @@ char *s21_strstr(const char *haystack, const char *needle) {
   }
   return result;
 }
-//    char *s21_strtok(char *str, const char *delim){}
+char *s21_strtok(char *str, const char *delim) {
+  static char *str_stat;
+  char *token;
+
+  if (!str) {
+    if (!str_stat) {
+      return NULL;
+    } else {
+      str = str_stat;
+    }
+  }
+
+  str += s21_strcspn(str, delim);
+
+  if (!str) {
+    str_stat = str;
+    token = NULL;
+  } else {
+    token = str;
+    str = s21_strpbrk(token, delim);
+    if (!str) {
+      str_stat = NULL;
+    } else {
+      *str = '\0';
+      str_stat = str + 1;
+    }
+  }
+
+  return token;
+}
 //    int sscanf(const char *str, const char *format, ...){}
 // dop 2
 //    int sprintf(char *str, const char *format, ...){}
 // dop 3
+
 void *s21_to_upper(const char *str) {
   if (str == s21_NULL) {
     // Не более одного выхода из функции. Исключение составляет предварительная

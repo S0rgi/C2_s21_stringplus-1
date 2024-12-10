@@ -1,4 +1,6 @@
+
 CC = gcc
+
 CFLAGS = -Wall -Werror -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -lm -pedantic
 LIB_NAME = s21_string
 CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov
@@ -8,7 +10,7 @@ REPORT_PATH = report
 all: clean $(LIB_NAME).a test gcov_report
 
 clean:
-	rm -rf *.o *.a *.out $(REPORT_PATH) coverage.info
+	rm -rf *.o *.a *.out $(REPORT_PATH) coverage.info *.gc* 
 
 test: $(LIB_NAME).a test.o
 	$(CC) $(CFLAGS) test.o -L. $(LIB_NAME).a $(CHECK_LIBS) -o test.out

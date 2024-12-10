@@ -1,89 +1,68 @@
+#include <check.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "s21_string.h"
+#include "s21_string.h"  // Подключаем вашу библиотеку
 
-void memchr_test();
-void memcmp_test();
-void strlen_test();
-void strcmp_test();
-void s21_strchr_test();
-void null_test();
-void size_t_test();
-void strstr_test();
-void strncpy_test();
-void memcpy_test();
-void memset_test();
-void strcat_test();
-void s21_strrchr_test();
-void s21_to_upper_test();
-void s21_to_lower_test();
-void s21_strcspn_test();
-void strpbrk_test();
-int main() {
-  strpbrk_test();
-  return 0;
-}
-
-void strpbrk_test() {
+// Тесты для s21_strpbrk
+START_TEST(strpbrk_test) {
   const char *str1 = "hello";
   const char *str2 = "l";
 
   char *result_custom = s21_strpbrk(str1, str2);
   char *result_standard = strpbrk(str1, str2);
 
-  printf("Custom strpbrk result: %s\n", result_custom ? result_custom : "NULL");
-  printf("Standard strpbrk result: %s\n",
-         result_standard ? result_standard : "NULL");
+  ck_assert_ptr_eq(result_custom, result_standard);
 }
-void s21_strcspn_test() {
+END_TEST
+
+// Тесты для s21_strcspn
+START_TEST(s21_strcspn_test) {
   const char *str1 = "Hello, World!";
   const char *str2 = "aeiou";
 
   s21_size_t result1 = s21_strcspn(str1, str2);
   s21_size_t result2 = strcspn(str1, str2);
-  printf("Length of initial segment: %lu\n", result1);
-  printf("Length of initial segment: %lu\n", result2);
-}
-void s21_to_lower_test() {
-  const char *str = "Hello, World!";
-  char *upper_str = (char *)s21_to_lower(str);
-  if (upper_str != NULL) {
-    printf("Original: %s\n", str);
-    printf("Upper: %s\n", upper_str);
-    free(upper_str);
-  } else {
-    printf("Memory allocation failed\n");
-  }
-}
-void s21_to_upper_test() {
-  const char *str = "Hello, World!";
-  char *upper_str = (char *)s21_to_upper(str);
-  if (upper_str != NULL) {
-    printf("Original: %s\n", str);
-    printf("Upper: %s\n", upper_str);
-    free(upper_str);
-  } else {
-    printf("Memory allocation failed\n");
-  }
-}
-void s21_strrchr_test() {
-  char str1[] = "Hellol";
-  char *result1 = s21_strrchr(str1, (int)'o');
-  char *result2 = strrchr(str1, (int)'o');
 
-  if (result1 != NULL) {
-    printf("s21_strchr found: %s\n", result1);
-  } else {
-    printf("s21_strchr did not find 'o'\n");
-  }
-  if (result2 != NULL) {
-    printf("strchr found: %s\n", result2);
-  } else {
-    printf("strchr did not find 'o'\n");
-  }
+  ck_assert_int_eq(result1, result2);
 }
-void strcat_test() {
+END_TEST
+
+// Тесты для s21_to_lower
+START_TEST(s21_to_lower_test) {
+  const char *str = "Hello, World!";
+  char *lower_str = s21_to_lower(str);
+
+  ck_assert_str_eq(lower_str, "hello, world!");
+
+  free(lower_str);  // Освобождаем память
+}
+END_TEST
+
+// Тесты для s21_to_upper
+START_TEST(s21_to_upper_test) {
+  const char *str = "Hello, World!";
+  char *upper_str = s21_to_upper(str);
+
+  ck_assert_str_eq(upper_str, "HELLO, WORLD!");
+
+  free(upper_str);  // Освобождаем память
+}
+END_TEST
+
+// Тесты для s21_strrchr
+START_TEST(s21_strrchr_test) {
+  char str1[] = "Hellol";
+  char *result_custom = s21_strrchr(str1, 'o');
+  char *result_standard = strrchr(str1, 'o');
+
+  ck_assert_ptr_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для strcat
+START_TEST(strcat_test) {
   char dest1[20] = "Hello ";
   char dest2[20] = "Hello ";
   const char *str = "world";
@@ -91,128 +70,163 @@ void strcat_test() {
   s21_strncat(dest1, str, 5);
   strncat(dest2, str, 5);
 
-  printf("Custom strcat result: %s\n", dest1);
-  printf("Standard strcat result: %s\n", dest2);
+  ck_assert_str_eq(dest1, dest2);
 }
-void memset_test() {
+END_TEST
+
+// Тесты для memset
+START_TEST(memset_test) {
   char buffer1[20];
   char buffer2[20];
+
   s21_memset(buffer1, 'A', sizeof(buffer1) - 1);
   memset(buffer2, 'A', sizeof(buffer2) - 1);
-  buffer1[sizeof(buffer1) - 1] = '\0';
-  buffer2[sizeof(buffer1) - 1] = '\0';
 
-  printf("Buffer after memset: %s\n", buffer1);
-  printf("Buffer after memset: %s\n", buffer2);
+  buffer1[sizeof(buffer1) - 1] = '\0';
+  buffer2[sizeof(buffer2) - 1] = '\0';
+
+  ck_assert_str_eq(buffer1, buffer2);
 }
-void memcpy_test() {
+END_TEST
+
+// Тесты для memcpy
+START_TEST(memcpy_test) {
   char src[] = "Hello, world!";
-  char dest1[s21_strlen(src)];
-  char dest2[strlen(src)];
+  char dest1[20];
+  char dest2[20];
+
   s21_memcpy(dest1, src, sizeof(src));
   memcpy(dest2, src, sizeof(src));
-  printf("Destination after memcpy: %s\n", dest1);
-  printf("Destination after memcpy: %s\n", dest2);
-}
-void strncpy_test() {
-  char str[] = "Hellol";
-  char dest[s21_strlen(str)];
-  char *result1 = s21_strncpy(dest, str, 5);
-  char *result2 = s21_strncpy(dest, str, 5);
-  if (result1 != NULL) {
-    printf("dest : %s\n", result1);
-  } else {
-    printf("NULL\n");
-  }
-  if (result2 != NULL) {
-    printf("dest : %s\n", result2);
-  } else {
-    printf("NULL\n");
-  }
-}
-void null_test() {
-  if (s21_NULL == NULL)
-    printf("SUCCESS\n");
-  else
-    printf("FAIL\n");
-}
-void size_t_test() {
-  if (sizeof(size_t) == sizeof(s21_size_t))
-    printf("SUCCESS\n");
-  else
-    printf("FAIL\n");
-}
-void memcmp_test() {
-  char str1[] = "Hellol";
-  char str2[] = "Helloh";
-  int result1 = s21_memcmp(str1, str2, 6);
-  int result2 = memcmp(str1, str2, 6);
-  printf("Result of comparing str1 and str2: %d\n", result1);
-  printf("Result of comparing str1 and str3: %d\n", result2);
-}
-void memchr_test() {
-  char str1[] = "Hellol";
-  char ch = 'o';
-  void *result1 = s21_memchr(str1, (int)'e', 4);
-  void *result2 = s21_memchr(str1, (int)'e', 4);
-  if (result1 != NULL) {
-    printf("Character '%c' found at position: %ld\n", ch,
-           (unsigned char *)result1 - (unsigned char *)str1);
-  } else {
-    printf("Character '%c' not found.\n", ch);
-  }
-  if (result2 != NULL) {
-    printf("Character '%c' found at position: %ld\n", ch,
-           (unsigned char *)result2 - (unsigned char *)str1);
-  } else {
-    printf("Character '%c' not found.\n", ch);
-  }
-}
-void strlen_test() {
-  char str1[] = "Hellol";
-  int result1 = s21_strlen(str1);
-  int result2 = strlen(str1);
-  printf("Result of length str1: %d\n", result1);
-  printf("Result of length str1: %d\n", result2);
-}
-void strcmp_test() {
-  char str1[] = "Hellol";
-  char str2[] = "Helloh";
-  int result1 = s21_strncmp(str1, str2, 6);
-  int result2 = strncmp(str1, str2, 6);
-  printf("Result of comparing str1 and str2: %d\n", result1);
-  printf("Result of comparing str1 and str3: %d\n", result2);
-}
-void s21_strchr_test() {
-  char str1[] = "Hellol";
-  char *result1 = s21_strchr(str1, (int)'z');
-  char *result2 = strchr(str1, (int)'z');
 
-  if (result1 != NULL) {
-    printf("s21_strchr found: %s\n", result1);
-  } else {
-    printf("s21_strchr did not find 'o'\n");
-  }
-  if (result2 != NULL) {
-    printf("strchr found: %s\n", result2);
-  } else {
-    printf("strchr did not find 'o'\n");
-  }
+  ck_assert_str_eq(dest1, dest2);
 }
-void strstr_test() {
+END_TEST
+
+// Тесты для strncpy
+START_TEST(strncpy_test) {
+  const char str[] = "Hellol";
+  char dest[10];
+
+  s21_strncpy(dest, str, 5);
+
+  dest[5] = '\0';  // Добавляем нулевой символ для завершения строки
+
+  ck_assert_str_eq(dest, "Hello");
+}
+END_TEST
+
+// Тесты для null_test
+START_TEST(null_test) { ck_assert_ptr_eq(s21_NULL, NULL); }
+END_TEST
+
+// Тесты для size_t_test
+START_TEST(size_t_test) {
+  ck_assert_int_eq(sizeof(size_t), sizeof(s21_size_t));
+}
+END_TEST
+
+// Тесты для memcmp
+START_TEST(memcmp_test) {
+  char str1[] = "Hellol";
+  char str2[] = "Helloh";
+  int result_custom = s21_memcmp(str1, str2, 6);
+  int result_standard = memcmp(str1, str2, 6);
+
+  ck_assert_int_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для memchr
+START_TEST(memchr_test) {
+  char str1[] = "Hellol";
+  void *result_custom = s21_memchr(str1, 'o', 6);
+  void *result_standard = memchr(str1, 'o', 6);
+
+  ck_assert_ptr_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для strlen
+START_TEST(strlen_test) {
+  const char str1[] = "Hellol";
+  int result_custom = s21_strlen(str1);
+  int result_standard = strlen(str1);
+
+  ck_assert_int_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для strcmp
+START_TEST(strcmp_test) {
+  const char str1[] = "Hellol";
+  const char str2[] = "Helloh";
+  int result_custom = s21_strncmp(str1, str2,6);
+  int result_standard = strncmp(str1, str2,6);
+
+  ck_assert_int_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для s21_strchr
+START_TEST(s21_strchr_test) {
+  const char str1[] = "Hellol";
+  char *result_custom = s21_strchr(str1, 'o');
+  char *result_standard = strchr(str1, 'o');
+
+  ck_assert_ptr_eq(result_custom, result_standard);
+}
+END_TEST
+
+// Тесты для strstr
+START_TEST(strstr_test) {
   const char *haystack = "Hello, world!";
   const char *needle = "world";
 
-  char *result1 = s21_strstr(haystack, needle);
-  char *result2 = strstr(haystack, needle);
-  if (result1 != s21_NULL) {
-    printf("Found substring: %s\n", result1);
-  } else {
-    printf("Substring not found.\n");
-  }
-  if (result2 != s21_NULL) {
-    printf("Found substring: %s\n", result2);
-  } else {
-    printf("Substring not found.\n");
-  }
+  char *result_custom = s21_strstr(haystack, needle);
+  char *result_standard = strstr(haystack, needle);
+
+  ck_assert_ptr_eq(result_custom, result_standard);
+}
+END_TEST
+
+int main(void) {
+  Suite *suite;
+  SRunner *runner;
+
+  suite = suite_create("String Tests");
+
+  TCase *tcase_core = tcase_create("Core");
+
+  // Добавляем тесты в набор
+  tcase_add_test(tcase_core, strpbrk_test);
+  tcase_add_test(tcase_core, s21_strcspn_test);
+  tcase_add_test(tcase_core, s21_to_lower_test);
+  tcase_add_test(tcase_core, s21_to_upper_test);
+  tcase_add_test(tcase_core, s21_strrchr_test);
+  tcase_add_test(tcase_core, strcat_test);
+  tcase_add_test(tcase_core, memset_test);
+  tcase_add_test(tcase_core, memcpy_test);
+  tcase_add_test(tcase_core, strncpy_test);
+  tcase_add_test(tcase_core, null_test);
+  tcase_add_test(tcase_core, size_t_test);
+  tcase_add_test(tcase_core, memcmp_test);
+  tcase_add_test(tcase_core, memchr_test);
+  tcase_add_test(tcase_core, strlen_test);
+  tcase_add_test(tcase_core, strcmp_test);
+  tcase_add_test(tcase_core, s21_strchr_test);
+  tcase_add_test(tcase_core, strstr_test);
+
+  suite_add_tcase(suite, tcase_core);
+
+  runner = srunner_create(suite);
+
+  // Запускаем все тесты
+  srunner_run_all(runner, CK_NORMAL);
+
+  int failed_count =
+      srunner_ntests_failed(runner);  // Получаем количество проваленных тестов
+  srunner_free(runner);  // Освобождаем ресурсы
+
+  return (failed_count == 0) ? EXIT_SUCCESS
+                             : EXIT_FAILURE;  // Возвращаем статус выполнения
 }

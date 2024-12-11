@@ -78,6 +78,7 @@ char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
   }
   return dest;
 }
+
 s21_size_t s21_strcspn(const char *str1, const char *str2) {
   s21_size_t result = 0;
   int found = 0;
@@ -87,6 +88,20 @@ s21_size_t s21_strcspn(const char *str1, const char *str2) {
       found = 1;
     }
     if (!found) result++;
+  }
+  return result;
+}
+
+s21_size_t s21_strspn(const char *str1, const char *str2) {
+  s21_size_t result = 0;
+  int found = 0;
+
+  for (s21_size_t i = 0; !found && i < s21_strlen(str1); i++) {
+    if (s21_strchr(str2, str1[i]) == s21_NULL) {
+      found = 1;
+    } else {
+      result++;
+    }
   }
   return result;
 }
@@ -165,7 +180,7 @@ char *s21_strtok(char *str, const char *delim) {
     }
   }
 
-  str += s21_strcspn(str, delim);
+  str += s21_strspn(str, delim);
 
   if (!str) {
     str_stat = str;

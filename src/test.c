@@ -221,6 +221,9 @@ START_TEST(strtok_test) {
   ck_assert_str_eq(token, "Cruel");
 
   token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "World");
+
+  token = s21_strtok(NULL, " ");
   ck_assert_ptr_eq(token, NULL);
   free(str);
   free(str_);

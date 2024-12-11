@@ -69,15 +69,21 @@ int s21_strncmp(const char *str1, const char *str2, s21_size_t n) {
 
 char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
   if (src == s21_NULL) {
-    // Не более одного выхода из функции. Исключение составляет предварительная
-    // проверка аргументов функции.
     return s21_NULL;
   }
-  for (s21_size_t i = 0; i < n && src[i]; i++) {
+
+  s21_size_t i;
+  for (i = 0; i < n && src[i] != '\0'; i++) {
     dest[i] = src[i];
   }
+
+  for (; i < n; i++) {
+    dest[i] = '\0';
+  }
+
   return dest;
 }
+
 s21_size_t s21_strcspn(const char *str1, const char *str2) {
   s21_size_t result = 0;
   int found = 0;
@@ -189,48 +195,35 @@ char *s21_strtok(char *str, const char *delim) {
 // dop 3
 
 void *s21_to_upper(const char *str) {
-  if (str == s21_NULL) {
-    // Не более одного выхода из функции. Исключение составляет предварительная
-    // проверка аргументов функции.
-    return s21_NULL;
-  }
-  s21_size_t len = s21_strlen(str);
-  char *dup = (char *)malloc((len + 1) * sizeof(char));
-  void *result = s21_NULL;
-  if (dup != s21_NULL) {
-    for (s21_size_t i = 0; i < len; i++) {
-      if (str[i] >= 'a' && str[i] <= 'z') {
-        dup[i] = str[i] - 32;
-      } else {
-        dup[i] = str[i];
-      }
+  if (str == s21_NULL) return s21_NULL;
+  size_t len = s21_strlen(str);
+  char *upper_str = (char *)malloc(len + 1);
+  if (!upper_str) return s21_NULL;
+  for (size_t i = 0; i < len; i++) {
+    if (str[i] >= 'a' && str[i] <= 'z') {
+      upper_str[i] = str[i] - ('a' - 'A');
+    } else {
+      upper_str[i] = str[i];
     }
-    dup[len] = '\0';
-    result = (void *)dup;
   }
-  return result;
+  upper_str[len] = '\0';
+  return (void *)upper_str;
 }
 void *s21_to_lower(const char *str) {
-  if (str == s21_NULL) {
-    // Не более одного выхода из функции. Исключение составляет предварительная
-    // проверка аргументов функции.
-    return s21_NULL;
-  }
-  s21_size_t len = s21_strlen(str);
-  char *dup = (char *)malloc((len + 1) * sizeof(char));
-  void *result = s21_NULL;
-  if (dup != s21_NULL) {
-    for (s21_size_t i = 0; i < len; i++) {
-      if (str[i] >= 'A' && str[i] <= 'Z') {
-        dup[i] = str[i] + 32;
-      } else {
-        dup[i] = str[i];
-      }
+  if (str == s21_NULL) return s21_NULL;
+  size_t len = s21_strlen(str);
+  char *lower_str = (char *)malloc(len + 1);
+  if (!lower_str) return s21_NULL;
+  for (size_t i = 0; i < len; i++) {
+    if (str[i] >= 'A' && str[i] <= 'Z') {
+      lower_str[i] = str[i] + ('a' - 'A');
+    } else {
+      lower_str[i] = str[i];
     }
-    dup[len] = '\0';
-    result = (void *)dup;
   }
-  return result;
+  lower_str[len] = '\0';
+  return lower_str;
 }
+
 //    void *s21_insert(const char *src, const char *str, size_t start_index){}
 //   void *s21_trim(const char *src, const char *trim_chars){}

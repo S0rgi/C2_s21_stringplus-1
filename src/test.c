@@ -394,6 +394,10 @@ START_TEST(strlen_test) {
 
   ck_assert_int_eq(result_custom, result_standard);
 
+  const char *null_str = NULL; 
+  s21_size_t length = s21_strlen(null_str);
+
+  ck_assert_int_eq(length, 0);
   result_custom = s21_strlen("1234567890");
   result_standard = strlen("1234567890");
 
@@ -465,39 +469,46 @@ START_TEST(strstr_test) {
   ck_assert_ptr_eq(result_custom, result_standard);
 }
 END_TEST
-
 // Tests for s21_strtok
-// START_TEST(strtok_test) {
-//   char str1[] = "Hello World";
-//   char str2[] = "Goodbye Cruel World";
-//   char *token_custom;
-//   char *token_standard;
+START_TEST(strtok_test) {
+  const char str_1[] = "Hello World";
+  const char str_1_[] = "Goodbye Cruel World";
 
-//   token_custom = s21_strtok(str1, " ");
-//   token_standard = strtok(str1, " ");
-//   ck_assert_str_eq(token_custom, token_standard);
+  char *str = malloc(20);
+  char *str_ = malloc(30);
 
-//   token_custom = s21_strtok(NULL, " ");
-//   token_standard = strtok(NULL, " ");
-//   ck_assert_str_eq(token_custom, token_standard);
+  memset(str, 0, 20);
+  memset(str_, 0, 30);
 
-//   token_custom = s21_strtok(NULL, " ");
-//   token_standard = strtok(NULL, " ");
-//   ck_assert_ptr_eq(token_custom, token_standard);
+  strcpy(str, str_1);
+  strcpy(str_, str_1_);
 
-//   token_custom = s21_strtok(str2, " ");
-//   token_standard = strtok(str2, " ");
-//   ck_assert_str_eq(token_custom, token_standard);
+  char *token;
 
-//   token_custom = s21_strtok(NULL, " ");
-//   token_standard = strtok(NULL, " ");
-//   ck_assert_str_eq(token_custom, token_standard);
+  token = s21_strtok(str, " ");
+  ck_assert_str_eq(token, "Hello");
 
-//   token_custom = s21_strtok(NULL, " ");
-//   token_standard = strtok(NULL, " ");
-//   ck_assert_ptr_eq(token_custom, token_standard);
-// }
-// END_TEST
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "World");
+
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
+
+  token = s21_strtok(str_, " ");
+  ck_assert_str_eq(token, "Goodbye");
+
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "Cruel");
+
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "World");
+
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
+  free(str);
+  free(str_);
+}
+END_TEST
 
 // Test for s21_strerror with a non-existent file
 START_TEST(test_s21_strerror_nonexistent_file) {
@@ -542,7 +553,7 @@ int main(void) {
   tcase_add_test(tcase_core, strcmp_test);
   tcase_add_test(tcase_core, s21_strchr_test);
   tcase_add_test(tcase_core, strstr_test);
-  // tcase_add_test(tcase_core, strtok_test);
+  tcase_add_test(tcase_core, strtok_test);
   tcase_add_test(tcase_core, test_s21_strerror_nonexistent_file);
 
   suite_add_tcase(suite, tcase_core);

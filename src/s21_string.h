@@ -21,6 +21,7 @@ char *s21_strstr(const char *haystack, const char *needle);
 char *s21_strtok(char *str, const char *delim);
 int sprintf(char *str, const char *format, ...);
 // dop 2
+s21_size_t s21_strspn(const char *str1, const char *str2);
 int s21_sscanf(const char *str, const char *format, ...);
 // dop 3
 void *s21_to_upper(const char *str);

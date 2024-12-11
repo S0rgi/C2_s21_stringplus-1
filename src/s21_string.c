@@ -77,6 +77,22 @@ char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
   }
   return dest;
 }
+
+char *s21_strcpy(char *dest, const char *src) {
+  if (src == s21_NULL) {
+    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
+    return s21_NULL;
+  }
+  s21_size_t i = 0;
+  while (src[i] != '\0') {
+    dest[i] = src[i];
+    i++;
+  }
+  dest[i] = '\0';
+  return dest;
+}
+
+
 s21_size_t s21_strcspn(const char *str1, const char *str2) {
   s21_size_t result = 0;
   int found = 0;

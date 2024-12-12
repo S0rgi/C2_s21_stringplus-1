@@ -14,11 +14,10 @@ int main() {
   int number;
   char ch;
   char arr[20];
-  int count = sscanf(input, "%f %d %c %s", &num, &number, &ch,arr);
-  //scanf("%cl%d",&ch,&number);
-  printf("Number: %d\n", number);
-  printf("Number: %f\n",num);
-  printf("Value: %c\n", ch);
+  int count = s21_sscanf(input, "%f %d %c %s", &num, &number, &ch,arr);
+  printf("Number-int: %d\n", number);
+  printf("Number-float: %f\n",num);
+  printf("Char: %c\n", ch);
   printf("Str:%s\n",arr);
   printf("Values read: %d\n", count);
 

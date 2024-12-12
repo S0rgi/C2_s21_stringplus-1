@@ -394,7 +394,7 @@ START_TEST(strlen_test) {
 
   ck_assert_int_eq(result_custom, result_standard);
 
-  const char *null_str = NULL; 
+  const char *null_str = NULL;
   s21_size_t length = s21_strlen(null_str);
 
   ck_assert_int_eq(length, 0);

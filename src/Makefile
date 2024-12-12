@@ -60,3 +60,6 @@ val: test
 
 lint:
 	s21lint *.c *.h
+scan:clean
+	gcc $(CFLAGS) s21_string.c sscanf.c -o scan
+	./scan

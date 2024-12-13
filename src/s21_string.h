@@ -2,7 +2,10 @@
 #define S21_STRING_H
 #include <stdio.h>
 #include <stdlib.h>
+#include "s21_sprintf.h"
+
 typedef unsigned long s21_size_t;
+
 #define s21_NULL (void *)0
 void *s21_memchr(const void *str, int c, s21_size_t n);
 int s21_memcmp(const void *str1, const void *str2, s21_size_t n);
@@ -19,7 +22,7 @@ char *s21_strpbrk(const char *str1, const char *str2);
 char *s21_strrchr(const char *str, int c);
 char *s21_strstr(const char *haystack, const char *needle);
 char *s21_strtok(char *str, const char *delim);
-int sprintf(char *str, const char *format, ...);
+int s21_sprintf(char *str, const char *format, ...);
 // dop 2
 s21_size_t s21_strspn(const char *str1, const char *str2);
 int s21_sscanf(const char *str, const char *format, ...);

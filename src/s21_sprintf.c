@@ -193,14 +193,12 @@ void float_to_str(char *str, flags fl, double num, s21_size_t *max_size) {
 int float_to_arr(char *str, char *buf, flags fl, double num, double cpy,
                  long long int w_num, int minus) {
   int digit, i = 0, digit_count = 0;
-
   for (; i < fl.precision && fl.precision != -1; i++, digit_count++) {
     digit = fmodl(cpy, 10);
     buf[digit_count] = (char)('0' + digit);
     cpy -= digit;
     cpy /= 10;
   }
-
   if (fl.precision > 0) {
     buf[digit_count++] = '.';
     if (num < 1 && -1 < num && (fl.plus || fl.minus) && num != 0) {
@@ -224,27 +222,20 @@ int float_to_arr(char *str, char *buf, flags fl, double num, double cpy,
       cpy /= 10;
     }
   }
-
-  if (minus) {
-    buf[digit_count++] = '-';
-  }
-
+  if (minus) buf[digit_count++] = '-';
   if (fl.plus && minus == 0) {
     buf[digit_count++] = '+';
   }
-
   if (fl.minus == 0) {
     for (w_num = digit_count; w_num < fl.width; w_num++, digit_count++) {
       buf[w_num] = fl.specifier;
     }
-
   } else {
     char *str_cpy = str + digit_count;
     for (w_num = digit_count; w_num < fl.width; w_num++, digit_count++) {
       *str_cpy = fl.specifier;
     }
   }
-
   return digit_count;
 }
 

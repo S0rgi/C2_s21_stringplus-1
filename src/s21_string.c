@@ -2,15 +2,14 @@
 
 void *s21_memchr(const void *str, int c, s21_size_t n) {
   const unsigned char *ptr = (const unsigned char *)str;
-  void *result = s21_NULL;
 
   for (s21_size_t i = 0; i < n; i++) {
     if (ptr[i] == (unsigned char)c) {
-      result = (void *)(ptr + i);
+      return (void *)(ptr + i);
     }
   }
 
-  return result;
+  return s21_NULL;
 }
 int s21_memcmp(const void *str1, const void *str2, s21_size_t n) {
   int result = 0;
@@ -38,13 +37,25 @@ void *s21_memset(void *str, int c, s21_size_t n) {
   return str;
 }
 char *s21_strncat(char *dest, const char *src, s21_size_t n) {
-  s21_size_t dest_len = s21_strlen(dest);
-  for (s21_size_t i = 0; i < n && src[i] != '\0'; i++) {
-    dest[dest_len + i] = src[i];
+  if (src == NULL) {
+    // Не более одного выхода из функции. Исключение составляет предварительная
+    // проверка аргументов функции.
+    return dest;
   }
-  dest[dest_len + n] = '\0';
+  s21_size_t dest_len = s21_strlen(dest);
+  s21_size_t i = 0;
+
+  if (n > 0) {
+    while (i < n && src[i] != '\0') {
+      dest[dest_len + i] = src[i];
+      i++;
+    }
+    dest[dest_len + i] = '\0';
+  }
+
   return dest;
 }
+
 char *s21_strchr(const char *str, int c) {
   return (char *)s21_memchr(str, c, s21_strlen(str) + 1);
 }
@@ -86,8 +97,10 @@ char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
 
 char *s21_strcpy(char *dest, const char *src) {
   if (src == s21_NULL) {
-    //Не более одного выхода из функции. Исключение составляет предварительная проверка аргументов функции.
+    // Не более одного выхода из функции. Исключение составляет предварительная
+    // проверка аргументов функции.
     return s21_NULL;
+  }
   s21_size_t i = 0;
   while (src[i] != '\0') {
     dest[i] = src[i];
@@ -96,8 +109,6 @@ char *s21_strcpy(char *dest, const char *src) {
   dest[i] = '\0';
   return dest;
 }
-
-
 
 s21_size_t s21_strcspn(const char *str1, const char *str2) {
   s21_size_t result = 0;
@@ -116,7 +127,6 @@ char *s21_strerror(int errnum) {
   static char *error_messages[] = ERRORS;
   static int error_list_length =
       sizeof(error_messages) / sizeof(error_messages[0]);
-  printf("length : %d\n", error_list_length);
 
   if (errnum < 0 || errnum > error_list_length) {
     return "Unknown error";
@@ -146,17 +156,22 @@ char *s21_strpbrk(const char *str1, const char *str2) {
 }
 char *s21_strrchr(const char *str, int c) {
   char *result = s21_NULL;
-  for (s21_size_t i = 0; str[i] != '\0'; i++) {
-    if (str[i] == (unsigned char)c) result = (char *)(str + i);
+  for (s21_size_t i = 0;; i++) {
+    if (str[i] == (unsigned char)c) {
+      result = (char *)(str + i);
+    }
+    if (str[i] == '\0') {
+      break;
+    }
   }
   return result;
 }
 char *s21_strstr(const char *haystack, const char *needle) {
-  if (*needle == '\0') {
-    // Не более одного выхода из функции. Исключение составляет предварительная
-    // проверка аргументов функции.
-    return (char *)haystack;
-  }
+  if (haystack == s21_NULL || needle == s21_NULL || *haystack == '\0')
+    return s21_NULL;
+
+  if (*needle == '\0') return (char *)haystack;
+
   s21_size_t needle_len = s21_strlen(needle);
   s21_size_t haystack_len = s21_strlen(haystack);
   char *result = s21_NULL;
@@ -170,6 +185,7 @@ char *s21_strstr(const char *haystack, const char *needle) {
     }
     if (match) {
       result = (char *)(haystack + i);
+      break;
     }
   }
   return result;

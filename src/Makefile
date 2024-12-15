@@ -1,9 +1,9 @@
 
 CC = gcc
 
-CFLAGS = -Wall -Werror -Wextra -std=c11 -D_POSIX_C_SOURCE=200809L -lm -pedantic
+CFLAGS = -std=c11  -D_POSIX_C_SOURCE=200809L -lm -pedantic -Wall -Werror -Wextra
 LIB_NAME = s21_string
-CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov
+CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov -pthread
 
 REPORT_PATH = report
 
@@ -16,12 +16,13 @@ test: $(LIB_NAME).a test.o
 	$(CC) $(CFLAGS) test.o -L. $(LIB_NAME).a $(CHECK_LIBS) -o test.out
 	./test.out
 
-$(LIB_NAME).a: $(LIB_NAME).o
-	ar rcs $(LIB_NAME).a $(LIB_NAME).o
+$(LIB_NAME).a: $(LIB_NAME).o s21_sprintf.o
+	ar rcs $(LIB_NAME).a $(LIB_NAME).o s21_sprintf.o
 
-$(LIB_NAME).o: $(LIB_NAME).c
+$(LIB_NAME).o:clean $(LIB_NAME).c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c $(LIB_NAME).c -o $(LIB_NAME).o
-
+s21_sprintf.o:s21_sprintf.c
+	$(CC) $(CFLAGS) -c s21_sprintf.c -o s21_sprintf.o
 test.o: test.c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c test.c -o test.o
 

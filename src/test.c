@@ -205,6 +205,9 @@ START_TEST(strtok_test) {
 
   char *token;
 
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
+
   token = s21_strtok(str, " ");
   ck_assert_str_eq(token, "Hello");
 
@@ -235,9 +238,12 @@ START_TEST(test_s21_strerror_nonexistent_file) {
   char filename[512] = {0};
   strcpy(filename, "nofile.txt");
 
+  const char *error_message = s21_strerror(-1);
+  ck_assert_str_eq(error_message, "Unknown error");
+
   if (!(file = fopen(filename, "r"))) {
     ck_assert_int_eq(errno, ENOENT);
-    const char *error_message = s21_strerror(errno);
+    error_message = s21_strerror(errno);
     ck_assert_str_eq(error_message, "No such file or directory");
   }
 

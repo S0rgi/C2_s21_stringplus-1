@@ -642,29 +642,56 @@ START_TEST(strncpy_test) {
   s21_strncpy(dest, "H", 5);
   ck_assert_str_eq(dest, "H");
 
-  //   // Test case 9: Source is a long string
-  //   s21_strncpy(dest, "ThisIsAVeryLongString", 10);
-  //   ck_assert_str_eq(dest, "ThisIsAVery");
-
-  // Test case 10: Source is an empty string
+  // Test case 9: Source is an empty string
   s21_strncpy(dest, "", 5);
   ck_assert_str_eq(dest, "");
+}
+END_TEST
+// Tests for s21_strcpy
+START_TEST(strcpy_test) {
+  const char *src = "Hello";
+  char dest[10] = {0};
 
-  //   // Test case 11: Source is a null pointer
-  //   s21_strncpy(dest, NULL, 5);
-  //   ck_assert_ptr_eq(dest, s21_NULL);
+  // Test case 1: Normal copy
+  s21_strcpy(dest, src);
+  ck_assert_str_eq(dest, "Hello");
 
-  //   // Test case 12: Source and destination are the same
-  //   s21_strncpy(dest, dest, 5);
-  //   ck_assert_str_eq(dest, "ThisI");
+  // Test case 2: Copy empty string
+  s21_strcpy(dest, "");
+  ck_assert_str_eq(dest, "");
 
-  //   // Test case 13: Source is a string with spaces
-  //   s21_strncpy(dest, "Hello World", 10);
-  //   ck_assert_str_eq(dest, "Hello Worl");
+  // Test case 3: Source is shorter than destination buffer
+  s21_strcpy(dest, "Hi");
+  ck_assert_str_eq(dest, "Hi");
 
-  //   // Test case 14: Source is a string with special characters
-  //   s21_strncpy(dest, "Hello, World!", 10);
-  //   ck_assert_str_eq(dest, "Hello, Wor");
+  // Test case 4: Source is a single character
+  s21_strcpy(dest, "H");
+  ck_assert_str_eq(dest, "H");
+
+  // Test case 5: Source is an empty string (again to check overwriting)
+  s21_strcpy(dest, "");
+  ck_assert_str_eq(dest, "");
+
+  // Test case 6: Source and destination are the same
+  s21_strcpy(dest, dest);
+  ck_assert_str_eq(dest, "");
+
+  // Test case 7: Source is NULL
+  ck_assert_ptr_eq(s21_strcpy(dest, NULL), s21_NULL);
+
+  // Test case 8: Destination buffer is exactly the size of the source string
+  char dest2[6] = {0};
+  s21_strcpy(dest2, "Hello");
+  ck_assert_str_eq(dest2, "Hello");
+
+  // Test case 9: Copy a longer string into a larger buffer
+  char long_dest[50] = {0};
+  s21_strcpy(long_dest, "This is a long string test.");
+  ck_assert_str_eq(long_dest, "This is a long string test.");
+
+  // Test case 10: Source string has spaces
+  s21_strcpy(dest, "Hi there");
+  ck_assert_str_eq(dest, "Hi there");
 }
 END_TEST
 
@@ -1080,96 +1107,49 @@ START_TEST(strstr_test) {
 END_TEST
 
 // Tests for s21_strtok
-// START_TEST(strtok_test) {
-//   const char str_1[] = "Hello World";
-//   const char str_1_[] = "Goodbye Cruel World";
+START_TEST(strtok_test) {
+  const char str_1[] = "Hello World";
+  const char str_1_[] = "Goodbye Cruel World";
 
-//   char *str = (char *)malloc(20);
-//   char *str_ = (char *)malloc(30);
+  char *str = malloc(20);
+  char *str_ = malloc(30);
 
-//   memset(str, 0, 20);
-//   memset(str_, 0, 30);
+  memset(str, 0, 20);
+  memset(str_, 0, 30);
 
-//   strcpy(str, str_1);
-//   strcpy(str_, str_1_);
+  strcpy(str, str_1);
+  strcpy(str_, str_1_);
 
-//   char *token;
+  char *token;
 
-//   token = s21_strtok(str, " ");
-//   ck_assert_str_eq(token, "Hello");
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
 
-//   token = s21_strtok(NULL, " ");
-//   ck_assert_str_eq(token, "World");
+  token = s21_strtok(str, " ");
+  ck_assert_str_eq(token, "Hello");
 
-//   token = s21_strtok(NULL, " ");
-//   ck_assert_ptr_eq(token, NULL);
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "World");
 
-//   token = s21_strtok(str_, " ");
-//   ck_assert_str_eq(token, "Goodbye");
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
 
-//   token = s21_strtok(NULL, " ");
-//   ck_assert_str_eq(token, "Cruel");
+  token = s21_strtok(str_, " ");
+  ck_assert_str_eq(token, "Goodbye");
 
-//   token = s21_strtok(NULL, " ");
-//   ck_assert_str_eq(token, "World");
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "Cruel");
 
-//   token = s21_strtok(NULL, " ");
-//   ck_assert_ptr_eq(token, NULL);
+  token = s21_strtok(NULL, " ");
+  ck_assert_str_eq(token, "World");
 
-//   strcpy(str, "");
-//   token = s21_strtok(str, " ");
-//   ck_assert_ptr_eq(token, NULL);
+  token = s21_strtok(NULL, " ");
+  ck_assert_ptr_eq(token, NULL);
+  free(str);
+  free(str_);
+}
 
-//   strcpy(str, "Hello,World");
-//   token = s21_strtok(str, ",");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, ",");
-//   ck_assert_str_eq(token, "World");
-
-//   strcpy(str, "Hello---World");
-//   token = s21_strtok(str, "---");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, "---");
-//   ck_assert_str_eq(token, "World");
-
-//   strcpy(str, "Hello World");
-//   token = s21_strtok(str, "");
-//   ck_assert_str_eq(token, "Hello World");
-
-//   strcpy(str, "Hello, World");
-//   token = s21_strtok(str, " ,");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, " ,");
-//   ck_assert_str_eq(token, "World");
-
-//   strcpy(str, "Hello\tWorld\n");
-//   token = s21_strtok(str, "\t\n");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, "\t\n");
-//   ck_assert_str_eq(token, "World");
-
-//   strcpy(str, "Hello, World");
-//   token = s21_strtok(str, "ç");
-//   ck_assert_str_eq(token, "Hello, World");
-
-//   strcpy(str, "Hello,,World");
-//   token = s21_strtok(str, ",");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, ",");
-//   ck_assert_str_eq(token, "");
-//   token = s21_strtok(NULL, ",");
-//   ck_assert_str_eq(token, "World");
-
-//   strcpy(str, "Hello,,World");
-//   token = s21_strtok(str, ",,");
-//   ck_assert_str_eq(token, "Hello");
-//   token = s21_strtok(NULL, ",,");
-//   ck_assert_str_eq(token, "World");
-
-//   free(str);
-//   free(str_);
-// }
-// END_TEST
+END_TEST
 
 // Test for s21_strerror with a non-existent file
 START_TEST(test_s21_strerror_nonexistent_file) {
@@ -1177,9 +1157,12 @@ START_TEST(test_s21_strerror_nonexistent_file) {
   char filename[512] = {0};
   strcpy(filename, "nofile.txt");
 
+  const char *error_message = s21_strerror(-1);
+  ck_assert_str_eq(error_message, "Unknown error");
+
   if (!(file = fopen(filename, "r"))) {
     ck_assert_int_eq(errno, ENOENT);
-    const char *error_message = s21_strerror(errno);
+    error_message = s21_strerror(errno);
     ck_assert_str_eq(error_message, "No such file or directory");
   }
 
@@ -1187,8 +1170,99 @@ START_TEST(test_s21_strerror_nonexistent_file) {
     fclose(file);
   }
 }
-END_TEST
 
+END_TEST
+// Tests for s21_insert
+START_TEST(insert_test) {
+  char *result;
+
+  // Test case 1: Normal insertion
+  result = s21_insert("Hello World", "Beautiful ", 6);
+  ck_assert_str_eq(result, "Hello Beautiful World");
+  free(result);
+
+  // Test case 2: Insert at the beginning
+  result = s21_insert("World", "Hello ", 0);
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 3: Insert at the end
+  result = s21_insert("Hello", " World", 5);
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 4: Insert into an empty string
+  result = s21_insert("", "Hello", 0);
+  ck_assert_str_eq(result, "Hello");
+  free(result);
+
+  // Test case 5: Insert an empty string
+  result = s21_insert("Hello", "", 2);
+  ck_assert_str_eq(result, "Hello");
+  free(result);
+
+  // Test case 6: Insert with NULL source
+  result = s21_insert(NULL, "Hello", 0);
+  ck_assert_ptr_eq(result, NULL);
+
+  // Test case 7: Insert with NULL string to insert
+  result = s21_insert("Hello", NULL, 0);
+  ck_assert_ptr_eq(result, NULL);
+
+  // Test case 8: Insert with out-of-bounds start_index
+  result = s21_insert("Hello", " World", 10);
+  ck_assert_ptr_eq(result, NULL);
+}
+END_TEST
+// Tests for s21_trim
+START_TEST(trim_test) {
+  char *result;
+
+  // Test case 1: Trimming spaces from both ends
+  result = s21_trim("  Hello World  ", " ");
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 2: Trimming specific characters from both ends
+  result = s21_trim("!!!Hello World!!!", "!");
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 3: No trimming characters specified (default to spaces)
+  result = s21_trim("   Hello World   ", NULL);
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 4: Source string is empty
+  result = s21_trim("", " ");
+  ck_assert_str_eq(result, "");
+  free(result);
+
+  // Test case 5: Source string has no trimming characters
+  result = s21_trim("Hello World", "!");
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 6: Source string is all trimming characters
+  result = s21_trim("!!!", "!");
+  ck_assert_str_eq(result, "");
+  free(result);
+
+  // Test case 7: Trimming multiple characters
+  result = s21_trim("abcHello Worldabc", "abc");
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+
+  // Test case 8: Trimming characters with NULL source
+  result = s21_trim(NULL, " ");
+  ck_assert_ptr_eq(result, NULL);
+
+  // Test case 9: Trimming NULL characters with valid source
+  result = s21_trim("   Hello World   ", NULL);
+  ck_assert_str_eq(result, "Hello World");
+  free(result);
+}
+END_TEST
 // Tests for s21_sprintf
 START_TEST(sprintf_test) {
   char buffer[256];
@@ -1255,11 +1329,6 @@ START_TEST(sprintf_test) {
   sprintf(expected, "% d", 123);
   ck_assert_str_eq(buffer, expected);
 
-  //   // Test case 13: Zero padding
-  //   s21_sprintf(buffer, "%05d", 123);
-  //   sprintf(expected, "%05d", 123);
-  //   ck_assert_str_eq(buffer, expected);
-
   // Test case 14: Combination of width and precision
   s21_sprintf(buffer, "%5.2f", 123.456);
   sprintf(expected, "%5.2f", 123.456);
@@ -1315,11 +1384,6 @@ START_TEST(sprintf_test) {
   sprintf(expected, "%hhu", (unsigned char)123);
   ck_assert_str_eq(buffer, expected);
 
-  //   // Test case 25: Float with large precision
-  //   s21_sprintf(buffer, "%.50f", 123.456);
-  //   sprintf(expected, "%.50f", 123.456);
-  //   ck_assert_str_eq(buffer, expected);
-
   // Test case 26: Float with very small value
   s21_sprintf(buffer, "%f", 1e-10);
   sprintf(expected, "%f", 1e-10);
@@ -1362,20 +1426,10 @@ START_TEST(sprintf_test) {
   sprintf(expected, "%d %f %s", 123, 123.456, "Hello, World!");
   ck_assert_str_eq(buffer, expected);
 
-  // Test case 34: Empty format string
-  // s21_sprintf(buffer, "");
-  // sprintf(expected, "");
-  // ck_assert_str_eq(buffer, expected);
-
   // Test case 35: Format string with no arguments
   s21_sprintf(buffer, "Hello, World!");
   sprintf(expected, "Hello, World!");
   ck_assert_str_eq(buffer, expected);
-
-  //   // Test case 36: Format string with invalid specifier
-  //   s21_sprintf(buffer, "%k", 123);
-  //   sprintf(expected, "%k", 123);
-  //   ck_assert_str_eq(buffer, expected);
 
   // Test case 37: Format string with invalid width
   s21_sprintf(buffer, "%-d", 123);
@@ -1386,11 +1440,6 @@ START_TEST(sprintf_test) {
   s21_sprintf(buffer, "%.d", 123);
   sprintf(expected, "%.d", 123);
   ck_assert_str_eq(buffer, expected);
-
-  // Test case 39: Format string with invalid length modifier
-  // s21_sprintf(buffer, "%zd", 123);
-  // sprintf(expected, "%zd", 123);
-  // ck_assert_str_eq(buffer, expected);
 
   // Test case 40: Format string with invalid combination of flags
   s21_sprintf(buffer, "%+-d", 123);
@@ -1407,10 +1456,6 @@ START_TEST(sprintf_test) {
   s21_sprintf(buffer, "%-5.0d", 123);
   sprintf(expected, "%-5.0d", 123);
   ck_assert_str_eq(buffer, expected);
-
-  // Test case 43: Format string with invalid combination of width, precision,
-  // and length modifier s21_sprintf(buffer, "%5.0zd", 123); sprintf(expected,
-  // "%5.0zd", 123); ck_assert_str_eq(buffer, expected);
 }
 END_TEST
 
@@ -1432,6 +1477,7 @@ int main(void) {
   tcase_add_test(tcase_core, memset_test);
   tcase_add_test(tcase_core, memcpy_test);
   tcase_add_test(tcase_core, strncpy_test);
+  tcase_add_test(tcase_core, strcpy_test);
   tcase_add_test(tcase_core, null_test);
   tcase_add_test(tcase_core, size_t_test);
   tcase_add_test(tcase_core, memcmp_test);
@@ -1440,10 +1486,11 @@ int main(void) {
   tcase_add_test(tcase_core, strcmp_test);
   tcase_add_test(tcase_core, s21_strchr_test);
   tcase_add_test(tcase_core, strstr_test);
-  // tcase_add_test(tcase_core, strtok_test);
+  tcase_add_test(tcase_core, strtok_test);
   tcase_add_test(tcase_core, test_s21_strerror_nonexistent_file);
   tcase_add_test(tcase_core, sprintf_test);
-
+  tcase_add_test(tcase_core, insert_test);
+  tcase_add_test(tcase_core, trim_test);
   suite_add_tcase(suite, tcase_core);
 
   runner = srunner_create(suite);

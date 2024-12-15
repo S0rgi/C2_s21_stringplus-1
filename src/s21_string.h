@@ -24,6 +24,7 @@ char *s21_strpbrk(const char *str1, const char *str2);
 char *s21_strrchr(const char *str, int c);
 char *s21_strstr(const char *haystack, const char *needle);
 char *s21_strtok(char *str, const char *delim);
+s21_size_t s21_strspn_reverse(const char *str, const char *accept);
 int s21_sprintf(char *str, const char *format, ...);
 // dop 2
 s21_size_t s21_strspn(const char *str1, const char *str2);

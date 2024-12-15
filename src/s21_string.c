@@ -2,14 +2,14 @@
 
 void *s21_memchr(const void *str, int c, s21_size_t n) {
   const unsigned char *ptr = (const unsigned char *)str;
-
-  for (s21_size_t i = 0; i < n; i++) {
+  void *result = s21_NULL;
+  for (s21_size_t i = 0; i < n && !result; i++) {
     if (ptr[i] == (unsigned char)c) {
-      return (void *)(ptr + i);
+      result = (void *)(ptr + i);
     }
   }
 
-  return s21_NULL;
+  return result;
 }
 int s21_memcmp(const void *str1, const void *str2, s21_size_t n) {
   int result = 0;
@@ -155,28 +155,36 @@ char *s21_strpbrk(const char *str1, const char *str2) {
   return result;
 }
 char *s21_strrchr(const char *str, int c) {
+  if (str == s21_NULL) return s21_NULL;
+  // Не более одного выхода из функции. Исключение составляет предварительная
+  // проверка аргументов функции.
   char *result = s21_NULL;
-  for (s21_size_t i = 0;; i++) {
+  int flag = 1;
+  for (s21_size_t i = 0; flag; i++) {
     if (str[i] == (unsigned char)c) {
       result = (char *)(str + i);
     }
     if (str[i] == '\0') {
-      break;
+      flag = 0;
     }
   }
   return result;
 }
+
 char *s21_strstr(const char *haystack, const char *needle) {
   if (haystack == s21_NULL || needle == s21_NULL || *haystack == '\0')
+    // Не более одного выхода из функции. Исключение составляет предварительная
+    // проверка аргументов функции.
     return s21_NULL;
-
+  // Не более одного выхода из функции. Исключение составляет предварительная
+  // проверка аргументов функции.
   if (*needle == '\0') return (char *)haystack;
 
   s21_size_t needle_len = s21_strlen(needle);
   s21_size_t haystack_len = s21_strlen(haystack);
   char *result = s21_NULL;
 
-  for (s21_size_t i = 0; i <= haystack_len - needle_len; i++) {
+  for (s21_size_t i = 0; i <= haystack_len - needle_len && !result; i++) {
     int match = 1;
     for (s21_size_t j = 0; j < needle_len && match; j++) {
       if (haystack[i + j] != needle[j]) {
@@ -185,7 +193,6 @@ char *s21_strstr(const char *haystack, const char *needle) {
     }
     if (match) {
       result = (char *)(haystack + i);
-      break;
     }
   }
   return result;
@@ -220,6 +227,7 @@ char *s21_strtok(char *str, const char *delim) {
 
   return token;
 }
+
 s21_size_t s21_strspn(const char *str1, const char *str2) {
   s21_size_t result = 0;
   int found = 0;
@@ -234,41 +242,92 @@ s21_size_t s21_strspn(const char *str1, const char *str2) {
   return result;
 }
 
-//    int sscanf(const char *str, const char *format, ...){}
-// dop 2
-//    int sprintf(char *str, const char *format, ...){}
-// dop 3
-
 void *s21_to_upper(const char *str) {
   if (str == s21_NULL) return s21_NULL;
   size_t len = s21_strlen(str);
+  void *result = s21_NULL;
   char *upper_str = (char *)malloc(len + 1);
-  if (!upper_str) return s21_NULL;
-  for (size_t i = 0; i < len; i++) {
-    if (str[i] >= 'a' && str[i] <= 'z') {
-      upper_str[i] = str[i] - ('a' - 'A');
-    } else {
-      upper_str[i] = str[i];
+  if (upper_str) {
+    for (size_t i = 0; i < len; i++) {
+      if (str[i] >= 'a' && str[i] <= 'z') {
+        upper_str[i] = str[i] - ('a' - 'A');
+      } else {
+        upper_str[i] = str[i];
+      }
     }
+    upper_str[len] = '\0';
+    result = (void *)upper_str;
   }
-  upper_str[len] = '\0';
-  return (void *)upper_str;
+
+  return result;
 }
 void *s21_to_lower(const char *str) {
   if (str == s21_NULL) return s21_NULL;
   size_t len = s21_strlen(str);
+  void *result = s21_NULL;
   char *lower_str = (char *)malloc(len + 1);
-  if (!lower_str) return s21_NULL;
-  for (size_t i = 0; i < len; i++) {
-    if (str[i] >= 'A' && str[i] <= 'Z') {
-      lower_str[i] = str[i] + ('a' - 'A');
-    } else {
-      lower_str[i] = str[i];
+  if (lower_str) {
+    for (size_t i = 0; i < len; i++) {
+      if (str[i] >= 'A' && str[i] <= 'Z') {
+        lower_str[i] = str[i] + ('a' - 'A');
+      } else {
+        lower_str[i] = str[i];
+      }
     }
+    lower_str[len] = '\0';
+    result = (void *)lower_str;
   }
-  lower_str[len] = '\0';
-  return lower_str;
+  return result;
+}
+s21_size_t s21_strspn_reverse(const char *str, const char *accept) {
+  s21_size_t len = s21_strlen(str);
+  s21_size_t count = 0;
+  while (len > 0 && s21_strchr(accept, str[len - 1])) {
+    count++;
+    len--;
+  }
+  return count;
 }
 
-//    void *s21_insert(const char *src, const char *str, size_t start_index){}
-//   void *s21_trim(const char *src, const char *trim_chars){}
+void *s21_trim(const char *src, const char *trim_chars) {
+  char *trimmed = s21_NULL;
+  if (src != s21_NULL) {
+    if (trim_chars == s21_NULL) {
+      trim_chars = " ";
+    }
+    s21_size_t start = s21_strspn(src, trim_chars);
+    s21_size_t len = s21_strlen(src);
+    s21_size_t end = s21_strspn_reverse(src, trim_chars);
+    s21_size_t new_len = len - start - end;
+
+    if (start < len) {
+      trimmed = (char *)calloc(new_len + 1, sizeof(char));
+      if (trimmed != s21_NULL) {
+        s21_strncpy(trimmed, src + start, new_len);
+        trimmed[new_len] = '\0';
+      }
+    } else {
+      trimmed = (char *)calloc(1, sizeof(char));
+      if (trimmed != s21_NULL) {
+        trimmed[0] = '\0';
+      }
+    }
+  }
+  return trimmed;
+}
+void *s21_insert(const char *src, const char *str, s21_size_t start_index) {
+  s21_size_t size = s21_strlen(str) + s21_strlen(src) + 1;
+  char *ret = s21_NULL;
+  if ((src != s21_NULL && str != s21_NULL) && start_index <= s21_strlen(src)) {
+    ret = (char *)calloc(size, sizeof(char));
+    if (ret != s21_NULL) {
+      for (s21_size_t i = 0; i < start_index; i++) ret[i] = src[i];
+      for (s21_size_t i = 0; i < s21_strlen(str); i++)
+        ret[i + start_index] = str[i];
+      for (s21_size_t i = 0; i < s21_strlen(src) - start_index; i++)
+        ret[i + start_index + s21_strlen(str)] = src[i + start_index];
+      ret[size - 1] = '\0';
+    }
+  }
+  return ret;
+}

@@ -7,7 +7,7 @@ CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov -pthread
 
 REPORT_PATH = report
 
-all: clean $(LIB_NAME).a test gcov_report
+all: clean clang $(LIB_NAME).a test gcov_report
 
 clean:
 	rm -rf *.o *.a *.out $(REPORT_PATH) coverage.info *.gc* 

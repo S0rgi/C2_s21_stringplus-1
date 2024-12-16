@@ -1265,8 +1265,8 @@ START_TEST(trim_test) {
 END_TEST
 // Tests for s21_sprintf
 START_TEST(sprintf_test) {
-  char buffer[512];
-  char expected[512];
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 0: % format
   s21_sprintf(buffer, "%%");

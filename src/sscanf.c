@@ -15,13 +15,13 @@ void process_x(va_list args, const char **str);
 void process_p(va_list args, const char **str);
 void process_n(va_list args, const char **str);
 int main() {
-  const char *input = "1733 21.5 L lol 1733";
+  const char *input = "1733 21.5 L lol xdb";
   float number_f;
   int number_d;
   int number_o;
   char ch;
   char arr[20];
-  int count = s21_sscanf(input, "%d %f %c %s %o", &number_d, &number_f, &ch,
+  int count = s21_sscanf(input, "%d %f %c %s %x", &number_d, &number_f, &ch,
                          arr, &number_o);
   printf("Number-int_d: %d\n", number_d);
   printf("Number-int_o: %d\n", number_o);
@@ -32,7 +32,6 @@ int main() {
 
   return 0;
 }
-
 int s21_sscanf(const char *str, const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -90,7 +89,7 @@ void spec_parse(const char *spec, const char **str, va_list args) {
       break;
     case 'x':
     case 'X':
-      // process_x(args, str);
+      process_x(args, str);
       break;
     case 'p':
       // process_p(args, str);
@@ -177,22 +176,46 @@ void process_c(va_list args, const char **str) {
   }
 }
 void process_o(va_list args, const char **str) {
-  int *int_ptr = va_arg(args, int *);
-  if (int_ptr == s21_NULL) return;
+    int *int_ptr = va_arg(args, int *);
+    if (int_ptr == s21_NULL) return;
 
-  int result = 0;
-  int base = 1;
-  int fail = 0;
-  s21_size_t len = s21_strlen(*str);
-  for (s21_size_t i = len - 1; !fail && i >= 0; i--) {
-    if ((*str)[i] >= '0' && (*str)[i] <= '7') {
-      result += ((*str)[i] - '0') * base;
-      base *= 8;
-    } else {
-      result = 0;
-      fail = 1;
+    int result = 0;
+    int base = 1;
+    int fail = 0;
+    s21_size_t len = s21_strlen(*str);
+    for (s21_size_t i = len - 1; i < len && !fail; i--) {
+        if ((*str)[i] >= '0' && (*str)[i] <= '7') {
+            result += ((*str)[i] - '0') * base;
+            base *= 8;
+        } else {
+            result = 0;
+            fail = 1;
+        }
     }
-  }
-  *int_ptr = result;
-  *str += len;
+    *int_ptr = result;
+    *str += len;
+}
+void process_x(va_list args, const char **str) {
+    int *int_ptr = va_arg(args, int *);
+    if (int_ptr == s21_NULL) return;
+
+    int result = 0;
+    int base = 1;
+    int fail = 0;
+    s21_size_t len = s21_strlen(*str);
+    for (s21_size_t i = len - 1; i < len && !fail; i--) {
+        if ((*str)[i] >= '0' && (*str)[i] <= '9') {
+            result += ((*str)[i] - '0') * base;
+        } else if ((*str)[i] >= 'a' && (*str)[i] <= 'f') {
+            result += ((*str)[i] - 'a' + 10) * base;
+        } else if ((*str)[i] >= 'A' && (*str)[i] <= 'F') {
+            result += ((*str)[i] - 'A' + 10) * base;
+        } else {
+            result = 0;
+            fail = 1;
+        }
+        base *= 16;
+    }
+    *int_ptr = result;
+    *str += len;
 }

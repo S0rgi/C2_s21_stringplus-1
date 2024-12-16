@@ -22,7 +22,7 @@ $(LIB_NAME).a: $(LIB_NAME).o s21_sprintf.o
 $(LIB_NAME).o:clean $(LIB_NAME).c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c $(LIB_NAME).c -o $(LIB_NAME).o
 s21_sprintf.o:s21_sprintf.c
-	$(CC) $(CFLAGS) -c s21_sprintf.c -o s21_sprintf.o
+	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c s21_sprintf.c -o s21_sprintf.o
 test.o: test.c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c test.c -o test.o
 

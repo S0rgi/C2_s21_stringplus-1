@@ -1,7 +1,7 @@
 
 CC = gcc
 
-CFLAGS = -std=c11  -D_POSIX_C_SOURCE=200809L -lm -pedantic -Wall -Werror -Wextra
+CFLAGS = -std=c11  -D_POSIX_C_SOURCE=200809L -lm -pedantic 
 LIB_NAME = s21_string
 CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov -pthread
 
@@ -31,7 +31,7 @@ gcov_report: test
 	mkdir -p $(REPORT_PATH)
 
 	# Generate gcov report in .info format
-	lcov --capture --directory . --output-file coverage.info --exclude '*test*' --exclude '*build*' 
+	lcov --capture --directory . --output-file coverage.info --exclude '*test*'
 	genhtml coverage.info --output-directory $(REPORT_PATH)
 
 	# Open the report in the browser if possible

@@ -31,7 +31,7 @@ gcov_report: test
 	mkdir -p $(REPORT_PATH)
 
 	# Generate gcov report in .info format
-	lcov --capture --directory . --output-file coverage.info --exclude '*test*' --exclude '*build*' --ignore-errors unused
+	lcov --capture --directory . --output-file coverage.info --exclude '*test*' --exclude '*build*' 
 	genhtml coverage.info --output-directory $(REPORT_PATH)
 
 	# Open the report in the browser if possible

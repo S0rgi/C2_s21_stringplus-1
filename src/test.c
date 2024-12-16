@@ -1265,8 +1265,13 @@ START_TEST(trim_test) {
 END_TEST
 // Tests for s21_sprintf
 START_TEST(sprintf_test) {
-  char buffer[256];
-  char expected[256];
+  char buffer[512];
+  char expected[512];
+
+  // Test case 0: % format
+  s21_sprintf(buffer, "%%");
+  sprintf(expected, "%%");
+  ck_assert_str_eq(buffer, expected);
 
   // Test case 1: Basic integer formatting
   s21_sprintf(buffer, "%d", 123);
@@ -1278,6 +1283,31 @@ START_TEST(sprintf_test) {
   sprintf(expected, "%f", 123.456);
   ck_assert_str_eq(buffer, expected);
 
+  // Test case 2.1: Float minus
+  s21_sprintf(buffer, "%f", -123.456);
+  sprintf(expected, "%f", -123.456);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 2.2: Float space
+  s21_sprintf(buffer, "% f", 123.456);
+  sprintf(expected, "% f", 123.456);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 2.3: Float null prec
+  s21_sprintf(buffer, "%.0f", 123.456);
+  sprintf(expected, "%.0f", 123.456);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 2.4: Float null prec > 0,5
+  s21_sprintf(buffer, "%.0f", 123.6);
+  sprintf(expected, "%.0f", 123.6);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 2.3: Float > 0.5
+  s21_sprintf(buffer, "% f", 123.6);
+  sprintf(expected, "% f", 123.6);
+  ck_assert_str_eq(buffer, expected);
+
   // Test case 3: Basic string formatting
   s21_sprintf(buffer, "%s", "Hello, World!");
   sprintf(expected, "%s", "Hello, World!");
@@ -1286,6 +1316,11 @@ START_TEST(sprintf_test) {
   // Test case 4: Basic character formatting
   s21_sprintf(buffer, "%c", 'A');
   sprintf(expected, "%c", 'A');
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 4.1: Basic character formatting
+  s21_sprintf(buffer, "%-c", 'A');
+  sprintf(expected, "%-c", 'A');
   ck_assert_str_eq(buffer, expected);
 
   // Test case 5: Basic unsigned integer formatting
@@ -1311,6 +1346,21 @@ START_TEST(sprintf_test) {
   // Test case 9: Precision specification for strings
   s21_sprintf(buffer, "%.5s", "Hello, World!");
   sprintf(expected, "%.5s", "Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 9.1: Wide minus
+  s21_sprintf(buffer, "%-ls", L"Hello, World!");
+  sprintf(expected, "%-ls", L"Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 9.2: Minus
+  s21_sprintf(buffer, "%-s", "Hello, World!");
+  sprintf(expected, "%-s", "Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 9.3: Minus + width
+  s21_sprintf(buffer, "%-20s", "Hello, World!");
+  sprintf(expected, "%-20s", "Hello, World!");
   ck_assert_str_eq(buffer, expected);
 
   // Test case 10: Left justification
@@ -1421,6 +1471,24 @@ START_TEST(sprintf_test) {
   sprintf(expected, "%lc", wc);
   ck_assert_str_eq(buffer, expected);
 
+  // Test case 32.1: Character with wide character
+  wchar_t wc1 = L'A';
+  s21_sprintf(buffer, "%10lc", wc1);
+  sprintf(expected, "%10lc", wc1);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 32.2: Character with wide character and minus
+  wchar_t wc2 = L'A';
+  s21_sprintf(buffer, "%-10lc", wc2);
+  sprintf(expected, "%-10lc", wc2);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 32.3: Character with wide character and minus
+  wchar_t wc3 = L'A';
+  s21_sprintf(buffer, "%-lc", wc3);
+  sprintf(expected, "%-lc", wc3);
+  ck_assert_str_eq(buffer, expected);
+
   // Test case 33: Multiple format specifiers
   s21_sprintf(buffer, "%d %f %s", 123, 123.456, "Hello, World!");
   sprintf(expected, "%d %f %s", 123, 123.456, "Hello, World!");
@@ -1455,6 +1523,29 @@ START_TEST(sprintf_test) {
   // and flags
   s21_sprintf(buffer, "%-5.0d", 123);
   sprintf(expected, "%-5.0d", 123);
+  ck_assert_str_eq(buffer, expected);
+
+  // Test case 43: Resize
+  char *str =
+      "To represent the character you can use Universal Character Names "
+      "(UCNs). The character 'ф' has the Unicode value U+0444 and so in C++ "
+      "you could write it . Also if the source code encoding supports this "
+      "character then you can just write it literally in your source code.";
+  s21_sprintf(buffer, "%s", str);
+  sprintf(expected, "%s", str);
+
+  // Test case 44: Resize wchar
+  wchar_t *str1 =
+      L"1To represent the character you can use Universal Character Names To "
+      L"2represent the character you can use Universal Character Names  To "
+      L"3represent the character you can use Universal Character Names To "
+      L"4represent the character you can use Universal Character Names To "
+      L"5represent the character you can use Universal Character Names To "
+      L"6represent the character you can use Universal Character Names To "
+      L"7represent the character you can use Universal Character Names To ";
+
+  s21_sprintf(buffer, "%ls", str1);
+  sprintf(expected, "%ls", str1);
   ck_assert_str_eq(buffer, expected);
 }
 END_TEST

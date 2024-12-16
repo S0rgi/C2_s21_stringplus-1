@@ -147,6 +147,15 @@ s21_size_t s21_strlen(const char *str) {
   return i;
 }
 
+s21_size_t s21_wcslen(const wchar_t *str) {
+  s21_size_t len = 0;
+  while (*str != L'\0') {
+    len++;
+    str++;
+  }
+  return len;
+}
+
 char *s21_strpbrk(const char *str1, const char *str2) {
   char *result = s21_NULL;
   for (s21_size_t i = 0; result == s21_NULL && i < s21_strlen(str1); i++) {

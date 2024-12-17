@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "s21_string.h"
-
+void s21_scanf_tests(TCase *tcase_core);
 // Tests for s21_strpbrk
 START_TEST(strpbrk_test) {
   // Test case 1: Character found in the middle
@@ -1550,6 +1550,165 @@ START_TEST(sprintf_test) {
 }
 END_TEST
 
+// Тесты s21_sscanf
+START_TEST(test_sscanf_char) {
+  char str[] = "A";
+  char customCharValue, originalCharValue;
+  int count_custom = s21_sscanf(str, "%c", &customCharValue);
+  int count_original = sscanf(str, "%c", &originalCharValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customCharValue, originalCharValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_signed_integer) {
+  char str[] = "123";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%d", &customIntValue);
+  int count_original = sscanf(str, "%d", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_integer_in_any_format) {
+  char str[] = "0173";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%i", &customIntValue);
+  int count_original = sscanf(str, "%i", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);  // 0173 -> 0153 in octal
+}
+END_TEST
+
+START_TEST(test_sscanf_scientific_notation_lowercase_e) {
+  char str[] = "3.14e5";
+  float customFloatValue, originalFloatValue;
+  int count_custom = s21_sscanf(str, "%e", &customFloatValue);
+  int count_original = sscanf(str, "%e", &originalFloatValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_float_eq(customFloatValue, originalFloatValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_scientific_notation_uppercase_E) {
+  char str[] = "1.23E+3";
+  float customFloatValue, originalFloatValue;
+  int count_custom = s21_sscanf(str, "%E", &customFloatValue);
+  int count_original = sscanf(str, "%E", &originalFloatValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_float_eq(customFloatValue, originalFloatValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_float) {
+  char str[] = "45.67";
+  float customFloatValue, originalFloatValue;
+  int count_custom = s21_sscanf(str, "%f", &customFloatValue);
+  int count_original = sscanf(str, "%f", &originalFloatValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_float_eq(customFloatValue, originalFloatValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_unsigned_octal) {
+  char str[] = "075";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%o", &customIntValue);
+  int count_original = sscanf(str, "%o", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);  // 075 -> 75 in decimal
+}
+END_TEST
+
+START_TEST(test_sscanf_string) {
+  char str[] = "HelloWorld";
+  char customStringValue[50], originalStringValue[50];
+  int count_custom = s21_sscanf(str, "%s", customStringValue);
+  int count_original = sscanf(str, "%s", originalStringValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_str_eq(customStringValue, originalStringValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_unsigned_integer) {
+  char str[] = "12345";
+  unsigned int customUintValue, originalUintValue;
+  int count_custom = s21_sscanf(str, "%u", &customUintValue);
+  int count_original = sscanf(str, "%u", &originalUintValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customUintValue, originalUintValue);
+}
+END_TEST
+
+START_TEST(test_sscanf_unsigned_hex) {
+  char str[] = "FF";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%x", &customIntValue);
+  int count_original = sscanf(str, "%x", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);  // FF -> 255 in decimal
+}
+END_TEST
+
+START_TEST(test_sscanf_pointer) {
+  char str[] = "0x7ffeeeb13b70";
+  void *customPointerValue, *originalPointerValue;
+  int count_custom = s21_sscanf(str, "%p", &customPointerValue);
+  int count_original = sscanf(str, "%p", &originalPointerValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_ptr_eq(customPointerValue,
+                   originalPointerValue);  // Pointer address should match
+}
+END_TEST
+
+START_TEST(test_sscanf_n_format) {
+  char str[] = "Hello";
+  int customN, originalN;
+
+  int count_custom = s21_sscanf(str, "%n", &customN);
+  int count_original = sscanf(str, "%n", &originalN);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customN, 5);  // The number of characters parsed should be 5
+}
+END_TEST
+
+START_TEST(test_sscanf_percent) {
+  char str[] = "%";
+  int count_custom = s21_sscanf(str, "%%");
+  int count_original = sscanf(str, "%%");
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(count_custom, 1);  // Should match 1 since '%' is valid
+}
+END_TEST
+void s21_ss+canf_tests(TCase *tcase_core) {
+  tcase_add_test(tcase_core, test_sscanf_char);
+  tcase_add_test(tcase_core, test_sscanf_signed_integer);
+  tcase_add_test(tcase_core, test_sscanf_integer_in_any_format);
+  tcase_add_test(tcase_core, test_sscanf_scientific_notation_lowercase_e);
+  tcase_add_test(tcase_core, test_sscanf_scientific_notation_uppercase_E);
+  tcase_add_test(tcase_core, test_sscanf_float);
+  tcase_add_test(tcase_core, test_sscanf_unsigned_octal);
+  tcase_add_test(tcase_core, test_sscanf_string);
+  tcase_add_test(tcase_core, test_sscanf_unsigned_integer);
+  tcase_add_test(tcase_core, test_sscanf_unsigned_hex);
+  tcase_add_test(tcase_core, test_sscanf_pointer);
+  tcase_add_test(tcase_core, test_sscanf_n_format);
+  tcase_add_test(tcase_core, test_sscanf_percent);
+}
 // Add the new test to the main function
 int main(void) {
   Suite *suite;
@@ -1582,6 +1741,8 @@ int main(void) {
   tcase_add_test(tcase_core, sprintf_test);
   tcase_add_test(tcase_core, insert_test);
   tcase_add_test(tcase_core, trim_test);
+
+  s21_scanf_tests(tcase_core);
   suite_add_tcase(suite, tcase_core);
 
   runner = srunner_create(suite);

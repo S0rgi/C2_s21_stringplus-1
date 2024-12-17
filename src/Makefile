@@ -16,13 +16,15 @@ test: $(LIB_NAME).a test.o
 	$(CC) $(CFLAGS) test.o -L. $(LIB_NAME).a $(CHECK_LIBS) -o test.out
 	./test.out
 
-$(LIB_NAME).a: $(LIB_NAME).o s21_sprintf.o
-	ar rcs $(LIB_NAME).a $(LIB_NAME).o s21_sprintf.o
+$(LIB_NAME).a: $(LIB_NAME).o s21_sprintf.o s21_sscanf.o
+	ar rcs $(LIB_NAME).a $(LIB_NAME).o s21_sprintf.o s21_sscanf.o
 
 $(LIB_NAME).o:clean $(LIB_NAME).c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c $(LIB_NAME).c -o $(LIB_NAME).o
 s21_sprintf.o:s21_sprintf.c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c s21_sprintf.c -o s21_sprintf.o
+s21_sscanf.o:s21_sscanf.c
+	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c s21_sscanf.c -o s21_sscanf.o
 test.o: test.c
 	$(CC) $(CFLAGS) -fprofile-arcs -ftest-coverage -c test.c -o test.o
 

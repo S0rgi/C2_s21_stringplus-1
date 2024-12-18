@@ -1694,7 +1694,7 @@ START_TEST(test_sscanf_percent) {
   ck_assert_int_eq(count_custom, 1);  // Should match 1 since '%' is valid
 }
 END_TEST
-void s21_ss+canf_tests(TCase *tcase_core) {
+void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_char);
   tcase_add_test(tcase_core, test_sscanf_signed_integer);
   tcase_add_test(tcase_core, test_sscanf_integer_in_any_format);

@@ -5,7 +5,6 @@
 #include "s21_string.h"
 
 void spec_parse(const char *spec, const char **str, va_list args);
-int str_to_int(const char *str);
 void process_d(va_list args, const char **str);
 void process_i(va_list args, const char **str);
 void process_s(va_list args, const char **str);
@@ -15,24 +14,11 @@ void process_o(va_list args, const char **str);
 void process_x(va_list args, const char **str);
 void process_p(va_list args, const char **str);
 void process_n(va_list args, const char **str);
-// int main() {
-//   const char *input = "-1733 21.5 L lol -177";
-//   float number_f;
-//   int number_d;
-//   int number_o;
-//   char ch;
-//   char arr[20];
-//   int count = s21_sscanf(input, "%d %f %c %s %o", &number_d, &number_f, &ch,
-//                          arr, &number_o);
-//   printf("Number-int_d: %d\n", number_d);
-//   printf("Number-int_o: %d\n", number_o);
-//   printf("Number-float: %f\n", number_f);
-//   printf("Char: %c\n", ch);
-//   printf("Str: %s\n", arr);
-//   printf("Values read: %d\n", count);
+void process_u(va_list args, const char **str);
+void process_percent(const char **str);
+int s21_atoi(const char *str);
+float s21_atof(const char *str);
 
-//   return 0;
-// }
 int s21_sscanf(const char *str, const char *format, ...) {
   va_list args;
   va_start(args, format);
@@ -66,6 +52,9 @@ int s21_sscanf(const char *str, const char *format, ...) {
 void spec_parse(const char *spec, const char **str, va_list args) {
   // https://codelessons.dev/ru/scanf-in-c-cplusplus/#%D1%82%D0%B8%D0%BF
   switch (*spec) {
+    case '%':
+      process_percent(str);
+      break;
     case 'd':
       process_d(args, str);
       break;
@@ -89,49 +78,40 @@ void spec_parse(const char *spec, const char **str, va_list args) {
       process_o(args, str);
       break;
     case 'u':
+      process_u(args, str);
       break;
     case 'x':
     case 'X':
       process_x(args, str);
       break;
     case 'p':
-      // process_p(args, str);
+      process_p(args, str);
       break;
     case 'n':
-      // process_n(args, str);
+      process_n(args, str);
       break;
     default:
       break;
   }
 }
 
-int str_to_int(const char *str) {
-  int sign = 1;
-  int result = 0;
-
-  if (*str == '-') {
-    sign = -1;
-    str++;
-  } else if (*str == '+') {
-    str++;
+void process_percent(const char **str) {
+  if (**str == '%') {
+    (*str)++;
   }
-
-  while (*str >= '0' && *str <= '9') {
-    result = result * 10 + (*str - '0');
-    str++;
-  }
-
-  return sign * result;
 }
 
 void process_d(va_list args, const char **str) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
-
   char num[20];
   int i = 0;
+  int pos = 1;
   if (**str == '-') {
-    num[i++] = '-';
+    pos = -1;
+    (*str)++;
+  } else if (**str == '+') {
+    pos = 1;
     (*str)++;
   }
   while (**str >= '0' && **str <= '9' && i < (int)sizeof(num) - 1) {
@@ -139,7 +119,15 @@ void process_d(va_list args, const char **str) {
     (*str)++;
   }
   num[i] = '\0';
-  *int_ptr = atoi(num);
+  *int_ptr = pos * s21_atoi(num);
+}
+int s21_atoi(const char *str) {
+  int result = 0;
+  while (*str >= '0' && *str <= '9') {
+    result = result * 10 + (*str - '0');
+    str++;
+  }
+  return result;
 }
 
 void process_s(va_list args, const char **str) {
@@ -157,9 +145,14 @@ void process_f(va_list args, const char **str) {
   float *float_ptr = va_arg(args, float *);
   char num[20];
   int i = 0;
-
-  while ((**str >= '0' && **str <= '9') || **str == '.' || **str == '-' ||
-         **str == '+') {
+  int pos = 1.0f;
+  if (**str == '-') {
+    pos = -1.0f;
+    (*str)++;
+  } else if (**str == '+') {
+    (*str)++;
+  }
+  while ((**str >= '0' && **str <= '9') || **str == '.') {
     if (i < (int)sizeof(num) - 1) {
       num[i++] = **str;
       (*str)++;
@@ -167,15 +160,33 @@ void process_f(va_list args, const char **str) {
       break;
     }
   }
-
   num[i] = '\0';
-
   if (i > 0) {
-    *float_ptr = (float)atof(num);
+    *float_ptr = pos * (float)s21_atof(num);
   } else {
     *float_ptr = 0.0f;
   }
 }
+float s21_atof(const char *str) {
+  float result = 0.0f;
+  float fraction = 0.0f;
+  int fraction_divisor = 1;
+  while (*str >= '0' && *str <= '9') {
+    result = result * 10 + (*str - '0');
+    str++;
+  }
+  if (*str == '.') {
+    str++;
+    while (*str >= '0' && *str <= '9') {
+      fraction = fraction * 10 + (*str - '0');
+      fraction_divisor *= 10;
+      str++;
+    }
+  }
+  result += fraction / fraction_divisor;
+  return result;
+}
+
 void process_c(va_list args, const char **str) {
   char *char_ptr = va_arg(args, char *);
   if (**str != '\0') {
@@ -210,11 +221,22 @@ void process_o(va_list args, const char **str) {
 void process_x(va_list args, const char **str) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
-
+  int sign = 1;
   int result = 0;
   int base = 1;
   int fail = 0;
   s21_size_t len = s21_strlen(*str);
+  if (*str[0] == '-') {
+    sign = -1;
+    (*str)++;
+    len--;
+  }
+
+  if (len >= (s21_size_t)(2) && (*str)[0] == '0' &&
+      ((*str)[1] == 'x' || (*str)[1] == 'X')) {
+    *str += 2;
+    len -= 2;
+  }
   for (s21_size_t i = len - 1; i < len && !fail; i--) {
     if ((*str)[i] >= '0' && (*str)[i] <= '9') {
       result += ((*str)[i] - '0') * base;
@@ -228,26 +250,79 @@ void process_x(va_list args, const char **str) {
     }
     base *= 16;
   }
-  *int_ptr = result;
+  *int_ptr = result * sign;
+
   *str += len;
 }
 void process_i(va_list args, const char **str) {
-  int *int_ptr = va_arg(args, int *);
-  if (int_ptr == s21_NULL) return;
+  s21_size_t len = s21_strlen(*str);
+  int pos = (len > 0 && *str[0] == '-') ? 1 : 0;
+  if (len >= (s21_size_t)(2 + pos) && (*str)[0 + pos] == '0' &&
+      ((*str)[1 + pos] == 'x' || (*str)[1 + pos] == 'X'))
+    process_x(args, str);
+  else if (len >= (s21_size_t)(1 + pos) && (*str)[0 + pos] == '0')
+    process_o(args, str);
+  else
+    process_d(args, str);
+}
+void process_u(va_list args, const char **str) {
+  unsigned int *uint_ptr = va_arg(args, unsigned int *);
+  if (uint_ptr == s21_NULL) return;
 
+  unsigned int result = 0;
+  unsigned int base = 1;
+  int fail = 0;
+  s21_size_t len = s21_strlen(*str);
+
+  for (s21_size_t i = len; i-- > 0 && !fail;) {
+    if ((*str)[i] >= '0' && (*str)[i] <= '9') {
+      result += ((*str)[i] - '0') * base;
+    } else {
+      result = 0;
+      fail = 1;
+    }
+    base *= 10;
+  }
+
+  *uint_ptr = result;
+  *str += len;
+}
+
+void process_p(va_list args, const char **str) {
+  void **ptr_ptr = va_arg(args, void **);
+  if (ptr_ptr == s21_NULL) return;
+
+  unsigned long long result = 0;
+  unsigned long long base = 1;
+  int fail = 0;
   s21_size_t len = s21_strlen(*str);
 
   if (len >= 2 && (*str)[0] == '0' && ((*str)[1] == 'x' || (*str)[1] == 'X')) {
-    printf("mod_i_X\n");
     *str += 2;
-    process_x(args, str);
-
-  } else if (len >= 1 && (*str)[0] == '0') {
-    printf("mod_i_o\n");
-    *str += 1;
-    process_o(args, str);
-  } else {
-    printf("mod_i_d\n");
-    process_d(args, str);
+    len -= 2;
   }
+
+  for (s21_size_t i = len; i-- > 0 && !fail;) {
+    if ((*str)[i] >= '0' && (*str)[i] <= '9') {
+      result += ((*str)[i] - '0') * base;
+    } else if ((*str)[i] >= 'a' && (*str)[i] <= 'f') {
+      result += ((*str)[i] - 'a' + 10) * base;
+    } else if ((*str)[i] >= 'A' && (*str)[i] <= 'F') {
+      result += ((*str)[i] - 'A' + 10) * base;
+    } else {
+      result = 0;
+      fail = 1;
+    }
+    base *= 16;
+  }
+
+  *ptr_ptr = (void *)result;
+  *str += len;
+}
+
+void process_n(va_list args, const char **str) {
+  int *count_ptr = va_arg(args, int *);
+  if (count_ptr == s21_NULL) return;
+
+  *count_ptr = s21_strlen(*str);
 }

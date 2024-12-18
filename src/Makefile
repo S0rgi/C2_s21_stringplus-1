@@ -1,7 +1,7 @@
 
 CC = gcc
 
-CFLAGS = -std=c11  -D_POSIX_C_SOURCE=200809L -lm -pedantic 
+CFLAGS = -std=c11  -D_POSIX_C_SOURCE=200809L -lm -pedantic -Wall -Werror -Wextra
 LIB_NAME = s21_string
 CHECK_LIBS = -lcheck -lm -pthread -lsubunit -lgcov -pthread
 
@@ -64,5 +64,5 @@ val: test
 lint:
 	s21lint *.c *.h
 scan:clean
-	gcc $(CFLAGS) s21_string.c sscanf.c -o scan.out
+	gcc $(CFLAGS) -fsanitize=address s21_string.c s21_sscanf.c scan_test.c -o scan.out
 	./scan.out

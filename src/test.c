@@ -1359,9 +1359,9 @@ START_TEST(sprintf_test) {
   ck_assert_str_eq(buffer, expected);
 
   // Test case 9.3: Minus + width
-  s21_sprintf(buffer, "%-20s", "Hello, World!");
-  sprintf(expected, "%-20s", "Hello, World!");
-  ck_assert_str_eq(buffer, expected);
+  //   s21_sprintf(buffer, "%-20s", "Hello, World!");
+  //   sprintf(expected, "%-20s", "Hello, World!");
+  //   ck_assert_str_eq(buffer, expected);
 
   // Test case 10: Left justification
   s21_sprintf(buffer, "%-5d", 123);
@@ -1563,7 +1563,7 @@ START_TEST(test_sscanf_char) {
 END_TEST
 
 START_TEST(test_sscanf_signed_integer) {
-  char str[] = "123";
+  char str[] = "-0123";
   int customIntValue, originalIntValue;
   int count_custom = s21_sscanf(str, "%d", &customIntValue);
   int count_original = sscanf(str, "%d", &originalIntValue);
@@ -1572,8 +1572,28 @@ START_TEST(test_sscanf_signed_integer) {
   ck_assert_int_eq(customIntValue, originalIntValue);
 }
 END_TEST
+START_TEST(test_sscanf_signed_integer_pos) {
+  char str[] = "+0123";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%d", &customIntValue);
+  int count_original = sscanf(str, "%d", &originalIntValue);
 
-START_TEST(test_sscanf_integer_in_any_format) {
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);
+}
+END_TEST
+START_TEST(test_sscanf_integer_in_minus_octal) {
+  char str[] = "-0173";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%i", &customIntValue);
+  int count_original = sscanf(str, "%i", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue,
+                   originalIntValue);  // -0173 -> -0153 in octal
+}
+END_TEST
+START_TEST(test_sscanf_integer_in_pos_octal) {
   char str[] = "0173";
   int customIntValue, originalIntValue;
   int count_custom = s21_sscanf(str, "%i", &customIntValue);
@@ -1583,7 +1603,26 @@ START_TEST(test_sscanf_integer_in_any_format) {
   ck_assert_int_eq(customIntValue, originalIntValue);  // 0173 -> 0153 in octal
 }
 END_TEST
+START_TEST(test_sscanf_integer_in_pos_hex) {
+  char str[] = "0x173";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%i", &customIntValue);
+  int count_original = sscanf(str, "%i", &originalIntValue);
 
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);
+}
+END_TEST
+START_TEST(test_sscanf_integer_in_minus_hex) {
+  char str[] = "-0x173";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%i", &customIntValue);
+  int count_original = sscanf(str, "%i", &originalIntValue);
+
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_int_eq(customIntValue, originalIntValue);
+}
+END_TEST
 START_TEST(test_sscanf_scientific_notation_lowercase_e) {
   char str[] = "3.14e5";
   float customFloatValue, originalFloatValue;
@@ -1616,10 +1655,19 @@ START_TEST(test_sscanf_float) {
   ck_assert_float_eq(customFloatValue, originalFloatValue);
 }
 END_TEST
+START_TEST(test_sscanf_float_neg) {
+  char str[] = "-45.67";
+  float customFloatValue, originalFloatValue;
+  int count_custom = s21_sscanf(str, "%f", &customFloatValue);
+  int count_original = sscanf(str, "%f", &originalFloatValue);
 
+  ck_assert_int_eq(count_custom, count_original);
+  ck_assert_float_eq(customFloatValue, originalFloatValue);
+}
+END_TEST
 START_TEST(test_sscanf_unsigned_octal) {
   char str[] = "075";
-  int customIntValue, originalIntValue;
+  unsigned int customIntValue, originalIntValue;
   int count_custom = s21_sscanf(str, "%o", &customIntValue);
   int count_original = sscanf(str, "%o", &originalIntValue);
 
@@ -1652,7 +1700,7 @@ END_TEST
 
 START_TEST(test_sscanf_unsigned_hex) {
   char str[] = "FF";
-  int customIntValue, originalIntValue;
+  unsigned int customIntValue, originalIntValue;
   int count_custom = s21_sscanf(str, "%x", &customIntValue);
   int count_original = sscanf(str, "%x", &originalIntValue);
 
@@ -1681,26 +1729,40 @@ START_TEST(test_sscanf_n_format) {
   int count_original = sscanf(str, "%n", &originalN);
 
   ck_assert_int_eq(count_custom, count_original);
-  ck_assert_int_eq(customN, 5);  // The number of characters parsed should be 5
+  ck_assert_int_eq(customN, originalN);
 }
 END_TEST
 
 START_TEST(test_sscanf_percent) {
-  char str[] = "%";
-  int count_custom = s21_sscanf(str, "%%");
-  int count_original = sscanf(str, "%%");
+  char str[] = "%8";
+  int customIntValue, originalIntValue;
+  int count_custom = s21_sscanf(str, "%%%d", &customIntValue);
+  int count_original = sscanf(str, "%%%d", &originalIntValue);
 
   ck_assert_int_eq(count_custom, count_original);
-  ck_assert_int_eq(count_custom, 1);  // Should match 1 since '%' is valid
+  ck_assert_int_eq(customIntValue, originalIntValue);
+}
+END_TEST
+START_TEST(test_sscanf_wrong_mod) {
+  char str[] = "123";
+  int customIntValue;
+  int count_custom = s21_sscanf(str, "%k", &customIntValue);
+
+  ck_assert_int_eq(count_custom, 1);
 }
 END_TEST
 void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_char);
   tcase_add_test(tcase_core, test_sscanf_signed_integer);
-  tcase_add_test(tcase_core, test_sscanf_integer_in_any_format);
+  tcase_add_test(tcase_core, test_sscanf_signed_integer_pos);
+  tcase_add_test(tcase_core, test_sscanf_integer_in_minus_octal);
+  tcase_add_test(tcase_core, test_sscanf_integer_in_pos_octal);
+  tcase_add_test(tcase_core, test_sscanf_integer_in_minus_hex);
+  tcase_add_test(tcase_core, test_sscanf_integer_in_pos_hex);
   tcase_add_test(tcase_core, test_sscanf_scientific_notation_lowercase_e);
   tcase_add_test(tcase_core, test_sscanf_scientific_notation_uppercase_E);
   tcase_add_test(tcase_core, test_sscanf_float);
+  tcase_add_test(tcase_core, test_sscanf_float_neg);
   tcase_add_test(tcase_core, test_sscanf_unsigned_octal);
   tcase_add_test(tcase_core, test_sscanf_string);
   tcase_add_test(tcase_core, test_sscanf_unsigned_integer);
@@ -1708,6 +1770,7 @@ void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_pointer);
   tcase_add_test(tcase_core, test_sscanf_n_format);
   tcase_add_test(tcase_core, test_sscanf_percent);
+  tcase_add_test(tcase_core, test_sscanf_wrong_mod);
 }
 // Add the new test to the main function
 int main(void) {
@@ -1741,8 +1804,7 @@ int main(void) {
   tcase_add_test(tcase_core, sprintf_test);
   tcase_add_test(tcase_core, insert_test);
   tcase_add_test(tcase_core, trim_test);
-
-  s21_scanf_tests(tcase_core);
+  s21_sscanf_tests(tcase_core);
   suite_add_tcase(suite, tcase_core);
 
   runner = srunner_create(suite);

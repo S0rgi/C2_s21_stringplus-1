@@ -1672,7 +1672,7 @@ START_TEST(test_sscanf_unsigned_octal) {
   int count_original = sscanf(str, "%o", &originalIntValue);
 
   ck_assert_int_eq(count_custom, count_original);
-  ck_assert_int_eq(customIntValue, originalIntValue);  // 075 -> 75 in decimal
+  ck_assert_int_eq(customIntValue, originalIntValue);
 }
 END_TEST
 

@@ -143,30 +143,55 @@ void process_s(va_list args, const char **str) {
 
 void process_f(va_list args, const char **str) {
   float *float_ptr = va_arg(args, float *);
-  char num[20];
+  if (float_ptr == s21_NULL) return;
+
+  char num[50];
   int i = 0;
-  int pos = 1.0f;
+  int pos = 1;
+  int exp = 1;
   if (**str == '-') {
-    pos = -1.0f;
+    pos = -1;
     (*str)++;
   } else if (**str == '+') {
     (*str)++;
   }
-  while ((**str >= '0' && **str <= '9') || **str == '.') {
-    if (i < (int)sizeof(num) - 1) {
+
+  while ((**str >= '0' && **str <= '9') || **str == '.' || **str == 'e' ||
+         **str == 'E' || **str == '-') {
+    if (**str == 'e' || **str == 'E') {
+      (*str)++;
+      char exp_str[10];
+      int exp_i = 0;
+
+      if (**str == '-') {
+        exp = -1;
+        (*str)++;
+      } else if (**str == '+') {
+        (*str)++;
+      }
+      while ((**str >= '0' && **str <= '9')) {
+        exp_str[exp_i++] = **str;
+        (*str)++;
+      }
+      exp_str[exp_i] = '\0';
+      exp = pow(10, s21_atoi(exp_str));
+      break;
+    } else if (i < (int)sizeof(num) - 1) {
       num[i++] = **str;
       (*str)++;
     } else {
       break;
     }
   }
-  num[i] = '\0';
+
   if (i > 0) {
-    *float_ptr = pos * (float)s21_atof(num);
+    num[i] = '\0';
+    *float_ptr = pos * exp * (float)s21_atof(num);
   } else {
     *float_ptr = 0.0f;
   }
 }
+
 float s21_atof(const char *str) {
   float result = 0.0f;
   float fraction = 0.0f;

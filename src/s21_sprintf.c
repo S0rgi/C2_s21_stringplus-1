@@ -4,12 +4,16 @@
 
 #include "s21_string.h"
 
-void wchar_to_str(char *str, flags fl, wchar_t c, s21_size_t *max_size) {
-  for (s21_size_t i = 0; i < s21_strlen(str); i++) {
+void wchar_to_str(char *str, flags fl, wchar_t c, s21_size_t max_size) {
+  for (s21_size_t i = 0; i < max_size; i++) {
+    *(str + i) = '\0';
+  }
+  s21_size_t size = s21_strlen(str);
+  for (s21_size_t i = 0; i < size; i++) {
     *(str + i) = fl.specifier;
   }
   if (fl.minus) {
-    wcstombs(str, &c, *max_size);
+    wctomb(str, c);
     int a = s21_strlen(str);
     for (int i = a; i < fl.width; i++) {
       *(str + i) = fl.specifier;
@@ -21,20 +25,21 @@ void wchar_to_str(char *str, flags fl, wchar_t c, s21_size_t *max_size) {
       *(str + fl.width) = '\0';
     }
   } else {
-    char *buff = malloc(*max_size);
-    s21_size_t b_s = s21_strlen(buff);
-    for (s21_size_t i = 0; i < b_s; i++) {
+    char *buff = malloc(max_size);
+    for (s21_size_t i = 0; i < max_size; i++) {
       *(buff + i) = '\0';
     }
 
-    wcstombs(buff, &c, *max_size);
+    wctomb(buff, c);
 
-    int size = fl.width - s21_strlen(buff);
+    int size_width = fl.width - s21_strlen(buff);
 
-    for (int i = 0; i < size; i++, str++) {
+    for (int i = 0; i < size_width; i++, str++) {
       *str = fl.specifier;
     }
-    for (s21_size_t i = 0; i < s21_strlen(buff); i++, str++) {
+    
+    size = s21_strlen(buff);
+    for (s21_size_t i = 0; i < size; i++, str++) {
       *str = buff[i];
     }
     free(buff);
@@ -75,7 +80,7 @@ void char_to_str(char *str, flags fl, char c) {
   }
 }
 
-void process_char(char *str, flags fl, va_list args, s21_size_t *max_size) {
+void process_char(char *str, flags fl, va_list args, s21_size_t max_size) {
   if (fl.length == 'l') {
     wchar_t c = va_arg(args, wchar_t);
     wchar_to_str(str, fl, c, max_size);
@@ -85,8 +90,8 @@ void process_char(char *str, flags fl, va_list args, s21_size_t *max_size) {
   }
 }
 
-void int_to_str(char *str, flags fl, int64_t num, s21_size_t *max_size) {
-  char *buff = malloc(*max_size);
+void int_to_str(char *str, flags fl, int64_t num, s21_size_t max_size) {
+  char *buff = malloc(max_size);
   int digit_count = 0, minus = 0;
   int64_t cpy = num;
   if (num < 0) {
@@ -146,7 +151,7 @@ void int_to_arr(char *str, flags fl, int digit_count, char *buff, int minus) {
   *(str + dobavleno) = '\0';
 }
 
-void process_int(char *str, flags fl, va_list args, s21_size_t *max_size) {
+void process_int(char *str, flags fl, va_list args, s21_size_t max_size) {
   int64_t num = va_arg(args, int64_t);
   switch (fl.length) {
     case 0:
@@ -158,10 +163,10 @@ void process_int(char *str, flags fl, va_list args, s21_size_t *max_size) {
   int_to_str(str, fl, num, max_size);
 }
 
-void float_to_str(char *str, flags fl, double num, s21_size_t *max_size) {
+void float_to_str(char *str, flags fl, double num, s21_size_t max_size) {
   long double cpy, frac;
   long long int w_num = (long long int)num, digit_count, minus = 0;
-  char *buff = malloc(*max_size);
+  char *buff = malloc(max_size);
   *buff = '\0';
   if (fl.precision == 0) {
     fl.precision = 6;
@@ -252,7 +257,7 @@ int float_to_arr(char *buf, flags fl, double cpy, long long int w_num,
   return digit_count;
 }
 
-void process_float(char *str, flags fl, va_list args, s21_size_t *max_size) {
+void process_float(char *str, flags fl, va_list args, s21_size_t max_size) {
   long double num;
   num = va_arg(args, double);
   if (num != num) {
@@ -266,7 +271,7 @@ void process_float(char *str, flags fl, va_list args, s21_size_t *max_size) {
   }
 }
 
-void wchar_t_str_str(char **str, flags fl, wchar_t *c, s21_size_t *max_size) {
+void wchar_t_str_str(char **str, flags fl, const wchar_t *c, s21_size_t *max_size) {
   char *buf;
   if (*max_size < s21_wcslen(c) + 10) {
     *str = realloc(*str, s21_wcslen(c) + 10);
@@ -296,7 +301,7 @@ void wchar_t_str_str(char **str, flags fl, wchar_t *c, s21_size_t *max_size) {
   free(buf);
 }
 
-void str_str(char **str, flags fl, char *c, s21_size_t *max_size) {
+void str_str(char **str, flags fl, const char *c, s21_size_t *max_size) {
   char *buf;
   if (*max_size < s21_strlen(c) + 10) {
     *str = realloc(*str, s21_strlen(c) + 10);
@@ -310,6 +315,7 @@ void str_str(char **str, flags fl, char *c, s21_size_t *max_size) {
   s21_strcpy(buf, c);
 
   int a = s21_strlen(buf);
+  int char_writed = 0;
   if (fl.precision) {
     buf[fl.precision] = '\0';
   }
@@ -323,30 +329,33 @@ void str_str(char **str, flags fl, char *c, s21_size_t *max_size) {
     }
     for (int i = a; i < fl.width; i++) {
       *(*str + i) = fl.specifier;
+      char_writed++;
     }
   } else {
     for (int i = a; i < fl.width; i++) {
       *(*str + i) = fl.specifier;
+      char_writed++;
     }
     if (fl.precision >= 0) {
       s21_strcpy(*str, buf);
     }
   }
+  *(*str + char_writed + a) = '\0';
   free(buf);
 }
 
 void process_string(char **str, flags fl, va_list args, s21_size_t *max_size) {
   if (fl.length == 'l') {
-    wchar_t *c = va_arg(args, wchar_t *);
+    const wchar_t *c = va_arg(args, wchar_t *);
     wchar_t_str_str(str, fl, c, max_size);
   } else {
-    char *c = va_arg(args, char *);
+    const char *c = va_arg(args, char *);
     str_str(str, fl, c, max_size);
   }
 }
 
-void uint_t_str(char *str, flags fl, unsigned long num, s21_size_t *max_size) {
-  char *buf = malloc(*max_size);
+void uint_t_str(char *str, flags fl, unsigned long num, s21_size_t max_size) {
+  char *buf = malloc(max_size);
   *buf = '\0';
   int digit_count = 0;
   unsigned long cpy = num;
@@ -364,7 +373,7 @@ void uint_t_str(char *str, flags fl, unsigned long num, s21_size_t *max_size) {
   free(buf);
 }
 
-void process_uint(char *str, flags fl, va_list args, s21_size_t *max_size) {
+void process_uint(char *str, flags fl, va_list args, s21_size_t max_size) {
   uint64_t num = va_arg(args, uint64_t);
   switch (fl.length) {
     case 'h':
@@ -463,19 +472,19 @@ const char *parsing_len(const char *format, flags *fl) {
 void parsing_specs(char format, char **buf, flags fl, va_list args,
                    s21_size_t *max_size) {
   if (format == 'c') {
-    process_char(*buf, fl, args, max_size);
+    process_char(*buf, fl, args, *max_size);
   }
   if (format == 'd') {
-    process_int(*buf, fl, args, max_size);
+    process_int(*buf, fl, args, *max_size);
   }
   if (format == 'f') {
-    process_float(*buf, fl, args, max_size);
+    process_float(*buf, fl, args, *max_size);
   }
   if (format == 's') {
     process_string(buf, fl, args, max_size);
   }
   if (format == 'u') {
-    process_uint(*buf, fl, args, max_size);
+    process_uint(*buf, fl, args, *max_size);
   }
   if (format == '%') {
     char *bbuf = *buf;
@@ -486,7 +495,7 @@ void parsing_specs(char format, char **buf, flags fl, va_list args,
 }
 
 int s21_sprintf(char *str, const char *format, ...) {
-  char *str_begin = str;
+  const char *str_begin = str;
   s21_size_t max_size = 256;
 
   va_list args;

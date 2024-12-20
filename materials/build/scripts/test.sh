@@ -39,6 +39,11 @@ printf 'Build output:\n %s\n' "$OUTPUT"
 BUILD_RESULT=${OUTPUT: -1}
 printf 'Build result: %s\n' "$BUILD_RESULT"
 echo -e "-------------------------------------------------------------------------------\n"
+BUILD_SCRIPT=ci-scripts/cppcheck.sh
+OUTPUT=$(bash ${BUILD_SCRIPT} part1)
+printf 'Cppcheck output:\n %s\n' "$OUTPUT"
+BUILD_RESULT=${OUTPUT: -1}
+printf 'Cppcheck result: %s\n' "$BUILD_RESULT"
 echo -e "\n"
 
 

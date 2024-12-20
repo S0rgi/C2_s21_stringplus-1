@@ -1264,7 +1264,7 @@ START_TEST(trim_test) {
 }
 END_TEST
 // Tests for s21_sprintf
-START_TEST(sprintf_test) {
+START_TEST(test_sprintf_0) {
   char buffer[10512];
   char expected[10512];
 
@@ -1272,258 +1272,558 @@ START_TEST(sprintf_test) {
   s21_sprintf(buffer, "%%");
   sprintf(expected, "%%");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_1) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 1: Basic integer formatting
   s21_sprintf(buffer, "%d", 123);
   sprintf(expected, "%d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_2) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 2: Basic float formatting
   s21_sprintf(buffer, "%f", 123.456);
   sprintf(expected, "%f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_2_1) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 2.1: Float minus
   s21_sprintf(buffer, "%f", -123.456);
   sprintf(expected, "%f", -123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_2_2) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 2.2: Float space
   s21_sprintf(buffer, "% f", 123.456);
   sprintf(expected, "% f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_2_3) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 2.3: Float null prec
   s21_sprintf(buffer, "%.0f", 123.456);
   sprintf(expected, "%.0f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_2_4) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 2.4: Float null prec > 0,5
   s21_sprintf(buffer, "%.0f", 123.6);
   sprintf(expected, "%.0f", 123.6);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
 
-  // Test case 2.3: Float > 0.5
+START_TEST(test_sprintf_2_5) {
+  char buffer[10512];
+  char expected[10512];
+
+  // Test case 2.5: Float > 0.5
   s21_sprintf(buffer, "% f", 123.6);
   sprintf(expected, "% f", 123.6);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_3) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 3: Basic string formatting
   s21_sprintf(buffer, "%s", "Hello, World!");
   sprintf(expected, "%s", "Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_4) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 4: Basic character formatting
   s21_sprintf(buffer, "%c", 'A');
   sprintf(expected, "%c", 'A');
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_4_1) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 4.1: Basic character formatting
   s21_sprintf(buffer, "%-c", 'A');
   sprintf(expected, "%-c", 'A');
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_5) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 5: Basic unsigned integer formatting
   s21_sprintf(buffer, "%u", 12345);
   sprintf(expected, "%u", 12345);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_6) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 6: Width specification
   s21_sprintf(buffer, "%5d", 123);
   sprintf(expected, "%5d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_7) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 7: Precision specification for integers
   s21_sprintf(buffer, "%.5d", 123);
   sprintf(expected, "%.5d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_8) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 8: Precision specification for floats
   s21_sprintf(buffer, "%.2f", 123.456);
   sprintf(expected, "%.2f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_9) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 9: Precision specification for strings
   s21_sprintf(buffer, "%.5s", "Hello, World!");
   sprintf(expected, "%.5s", "Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_9_1) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 9.1: Wide minus
   s21_sprintf(buffer, "%-ls", L"Hello, World!");
   sprintf(expected, "%-ls", L"Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_9_2) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 9.2: Minus
   s21_sprintf(buffer, "%-s", "Hello, World!");
   sprintf(expected, "%-s", "Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_9_3) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 9.3: Minus + width
-  //   s21_sprintf(buffer, "%-20s", "Hello, World!");
-  //   sprintf(expected, "%-20s", "Hello, World!");
-  //   ck_assert_str_eq(buffer, expected);
+  s21_sprintf(buffer, "%-20s", "Hello, World!");
+  sprintf(expected, "%-20s", "Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_10) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 10: Left justification
   s21_sprintf(buffer, "%-5d", 123);
   sprintf(expected, "%-5d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_11) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 11: Sign specification
   buffer[0] = '\0';
   s21_sprintf(buffer, "%+d", -123);
   sprintf(expected, "%+d", -123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_12) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 12: Space specification
   s21_sprintf(buffer, "% d", 123);
   sprintf(expected, "% d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_14) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 14: Combination of width and precision
   s21_sprintf(buffer, "%5.2f", 123.456);
   sprintf(expected, "%5.2f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_15) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 15: Combination of width, precision, and left justification
   s21_sprintf(buffer, "%-5.2f", 123.456);
   sprintf(expected, "%-5.2f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_16) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 16: Combination of width, precision, and zero padding
   s21_sprintf(buffer, "%05.2f", 123.456);
   sprintf(expected, "%05.2f", 123.456);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_17) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 17: Long integer
   s21_sprintf(buffer, "%ld", 1234567890L);
   sprintf(expected, "%ld", 1234567890L);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_18) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 18: Long long integer
   s21_sprintf(buffer, "%lld", 1234567890123456789LL);
   sprintf(expected, "%lld", 1234567890123456789LL);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_19) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 19: Short integer
   s21_sprintf(buffer, "%hd", (short)123);
   sprintf(expected, "%hd", (short)123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_20) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 20: Short short integer
   s21_sprintf(buffer, "%hhd", (signed char)123);
   sprintf(expected, "%hhd", (signed char)123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_21) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 21: Unsigned long integer
   s21_sprintf(buffer, "%lu", 1234567890UL);
   sprintf(expected, "%lu", 1234567890UL);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_22) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 22: Unsigned long long integer
   s21_sprintf(buffer, "%llu", 1234567890123456789ULL);
   sprintf(expected, "%llu", 1234567890123456789ULL);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_23) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 23: Unsigned short integer
   s21_sprintf(buffer, "%hu", (unsigned short)123);
   sprintf(expected, "%hu", (unsigned short)123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_24) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 24: Unsigned short short integer
   s21_sprintf(buffer, "%hhu", (unsigned char)123);
   sprintf(expected, "%hhu", (unsigned char)123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_26) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 26: Float with very small value
   s21_sprintf(buffer, "%f", 1e-10);
   sprintf(expected, "%f", 1e-10);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_27) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 27: Float with very large value
   s21_sprintf(buffer, "%f", 1e10);
   sprintf(expected, "%f", 1e10);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_28) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 28: Float with NaN
   s21_sprintf(buffer, "%f", 0.0 / 0.0);
   sprintf(expected, "%f", 0.0 / 0.0);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_29) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 29: Float with infinity
   s21_sprintf(buffer, "%f", 1.0 / 0.0);
   sprintf(expected, "%f", 1.0 / 0.0);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_30) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 30: Float with negative infinity
   s21_sprintf(buffer, "%f", -1.0 / 0.0);
   sprintf(expected, "%f", -1.0 / 0.0);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_31) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 31: String with wide characters
   wchar_t wstr[] = L"Hello, World!";
   s21_sprintf(buffer, "%ls", wstr);
   sprintf(expected, "%ls", wstr);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 32: Character with wide character
   wchar_t wc = L'A';
   s21_sprintf(buffer, "%lc", wc);
   sprintf(expected, "%lc", wc);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_1) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 32.1: Character with wide character
   wchar_t wc1 = L'A';
   s21_sprintf(buffer, "%10lc", wc1);
   sprintf(expected, "%10lc", wc1);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_2) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 32.2: Character with wide character and minus
   wchar_t wc2 = L'A';
   s21_sprintf(buffer, "%-10lc", wc2);
   sprintf(expected, "%-10lc", wc2);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_3) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 32.3: Character with wide character and minus
   wchar_t wc3 = L'A';
   s21_sprintf(buffer, "%-lc", wc3);
   sprintf(expected, "%-lc", wc3);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_33) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 33: Multiple format specifiers
   s21_sprintf(buffer, "%d %f %s", 123, 123.456, "Hello, World!");
   sprintf(expected, "%d %f %s", 123, 123.456, "Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_35) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 35: Format string with no arguments
   s21_sprintf(buffer, "Hello, World!");
   sprintf(expected, "Hello, World!");
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_37) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 37: Format string with invalid width
   s21_sprintf(buffer, "%-d", 123);
   sprintf(expected, "%-d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_38) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 38: Format string with invalid precision
   s21_sprintf(buffer, "%.d", 123);
   sprintf(expected, "%.d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_40) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 40: Format string with invalid combination of flags
   s21_sprintf(buffer, "%+-d", 123);
   sprintf(expected, "%+-d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_41) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 41: Format string with invalid combination of width and precision
   s21_sprintf(buffer, "%5.0d", 123);
   sprintf(expected, "%5.0d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_42) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 42: Format string with invalid combination of width, precision,
   // and flags
   s21_sprintf(buffer, "%-5.0d", 123);
   sprintf(expected, "%-5.0d", 123);
   ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_43) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 43: Resize
   char *str =
@@ -1533,6 +1833,12 @@ START_TEST(sprintf_test) {
       "character then you can just write it literally in your source code.";
   s21_sprintf(buffer, "%s", str);
   sprintf(expected, "%s", str);
+}
+END_TEST
+
+START_TEST(test_sprintf_44) {
+  char buffer[10512];
+  char expected[10512];
 
   // Test case 44: Resize wchar
   wchar_t *str1 =
@@ -1549,6 +1855,65 @@ START_TEST(sprintf_test) {
   ck_assert_str_eq(buffer, expected);
 }
 END_TEST
+
+void s21_sprintf_tests(TCase *tcase_core) {
+  tcase_add_test(tcase_core, test_sprintf_0);
+  tcase_add_test(tcase_core, test_sprintf_1);
+  tcase_add_test(tcase_core, test_sprintf_2);
+  tcase_add_test(tcase_core, test_sprintf_2_1);
+  tcase_add_test(tcase_core, test_sprintf_2_2);
+  tcase_add_test(tcase_core, test_sprintf_2_3);
+  tcase_add_test(tcase_core, test_sprintf_2_4);
+  tcase_add_test(tcase_core, test_sprintf_2_5);
+  tcase_add_test(tcase_core, test_sprintf_3);
+  tcase_add_test(tcase_core, test_sprintf_4);
+  tcase_add_test(tcase_core, test_sprintf_4_1);
+  tcase_add_test(tcase_core, test_sprintf_5);
+  tcase_add_test(tcase_core, test_sprintf_6);
+  tcase_add_test(tcase_core, test_sprintf_7);
+  tcase_add_test(tcase_core, test_sprintf_8);
+  tcase_add_test(tcase_core, test_sprintf_9);
+  tcase_add_test(tcase_core, test_sprintf_9_1);
+  tcase_add_test(tcase_core, test_sprintf_9_2);
+  tcase_add_test(tcase_core, test_sprintf_9_3);
+
+  tcase_add_test(tcase_core, test_sprintf_10);
+  tcase_add_test(tcase_core, test_sprintf_11);
+  tcase_add_test(tcase_core, test_sprintf_12);
+  tcase_add_test(tcase_core, test_sprintf_14);
+  tcase_add_test(tcase_core, test_sprintf_15);
+  tcase_add_test(tcase_core, test_sprintf_16);
+  tcase_add_test(tcase_core, test_sprintf_17);
+  tcase_add_test(tcase_core, test_sprintf_18);
+  tcase_add_test(tcase_core, test_sprintf_19);
+
+  tcase_add_test(tcase_core, test_sprintf_20);
+  tcase_add_test(tcase_core, test_sprintf_21);
+  tcase_add_test(tcase_core, test_sprintf_22);
+  tcase_add_test(tcase_core, test_sprintf_23);
+  tcase_add_test(tcase_core, test_sprintf_24);
+  tcase_add_test(tcase_core, test_sprintf_26);
+  tcase_add_test(tcase_core, test_sprintf_27);
+  tcase_add_test(tcase_core, test_sprintf_28);
+  tcase_add_test(tcase_core, test_sprintf_29);
+
+  tcase_add_test(tcase_core, test_sprintf_30);
+  tcase_add_test(tcase_core, test_sprintf_31);
+  tcase_add_test(tcase_core, test_sprintf_32);
+  tcase_add_test(tcase_core, test_sprintf_32_1);
+  tcase_add_test(tcase_core, test_sprintf_32_2);
+  tcase_add_test(tcase_core, test_sprintf_32_3);
+  tcase_add_test(tcase_core, test_sprintf_33);
+  tcase_add_test(tcase_core, test_sprintf_35);
+  tcase_add_test(tcase_core, test_sprintf_37);
+  tcase_add_test(tcase_core, test_sprintf_38);
+
+  tcase_add_test(tcase_core, test_sprintf_40);
+  tcase_add_test(tcase_core, test_sprintf_41);
+  tcase_add_test(tcase_core, test_sprintf_42);
+  tcase_add_test(tcase_core, test_sprintf_43);
+  tcase_add_test(tcase_core, test_sprintf_44);
+}
 
 // Тесты s21_sscanf
 START_TEST(test_sscanf_char) {
@@ -1801,10 +2166,10 @@ int main(void) {
   tcase_add_test(tcase_core, strstr_test);
   tcase_add_test(tcase_core, strtok_test);
   tcase_add_test(tcase_core, test_s21_strerror_nonexistent_file);
-  tcase_add_test(tcase_core, sprintf_test);
   tcase_add_test(tcase_core, insert_test);
   tcase_add_test(tcase_core, trim_test);
-  s21_sscanf_tests(tcase_core);
+  s21_sprintf_tests(tcase_core);
+  // s21_sscanf_tests(tcase_core);
   suite_add_tcase(suite, tcase_core);
 
   runner = srunner_create(suite);

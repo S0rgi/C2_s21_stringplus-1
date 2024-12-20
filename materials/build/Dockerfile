@@ -13,6 +13,10 @@ RUN apk --no-cache --upgrade add \
     alpine-sdk\
     pcre-dev\
     pcre2\
+    check-dev\
+    subunit-dev\
+    lcov\
+    gzip\
     clang18-extra-tools &&\
     ln -s /usr/lib/llvm18/bin/clang-format /usr/bin/clang-format 
 

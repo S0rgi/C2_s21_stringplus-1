@@ -174,7 +174,7 @@ void process_f(va_list args, const char **str) {
         (*str)++;
       }
       exp_str[exp_i] = '\0';
-      exp = pow(10, s21_atoi(exp_str));
+      exp *= pow(10, s21_atoi(exp_str));
       break;
     } else if (i < (int)sizeof(num) - 1) {
       num[i++] = **str;

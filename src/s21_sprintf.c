@@ -37,7 +37,7 @@ void wchar_to_str(char *str, flags fl, wchar_t c, s21_size_t max_size) {
     for (int i = 0; i < size_width; i++, str++) {
       *str = fl.specifier;
     }
-    
+
     size = s21_strlen(buff);
     for (s21_size_t i = 0; i < size; i++, str++) {
       *str = buff[i];
@@ -271,7 +271,8 @@ void process_float(char *str, flags fl, va_list args, s21_size_t max_size) {
   }
 }
 
-void wchar_t_str_str(char **str, flags fl, const wchar_t *c, s21_size_t *max_size) {
+void wchar_t_str_str(char **str, flags fl, const wchar_t *c,
+                     s21_size_t *max_size) {
   char *buf;
   if (*max_size < s21_wcslen(c) + 10) {
     *str = realloc(*str, s21_wcslen(c) + 10);

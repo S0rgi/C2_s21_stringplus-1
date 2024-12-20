@@ -28,7 +28,8 @@ void float_to_str(char* str, flags fl, double num, s21_size_t max_size);
 int float_to_arr(char* buf, flags fl, double cpy, long long int w_num,
                  int minus);
 void process_float(char* str, flags fl, va_list args, s21_size_t max_size);
-void wchar_t_str_str(char** str, flags fl, const wchar_t* c, s21_size_t* max_size);
+void wchar_t_str_str(char** str, flags fl, const wchar_t* c,
+                     s21_size_t* max_size);
 void str_str(char** str, flags fl, const char* c, s21_size_t* max_size);
 void process_string(char** str, flags fl, va_list args, s21_size_t* max_size);
 void uint_t_str(char* str, flags fl, unsigned long num, s21_size_t max_size);

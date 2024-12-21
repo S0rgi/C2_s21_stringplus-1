@@ -4,17 +4,18 @@
 
 #include "s21_string.h"
 
-void spec_parse(const char *spec, const char **str, va_list args);
-void process_d(va_list args, const char **str);
-void process_i(va_list args, const char **str);
-void process_s(va_list args, const char **str);
-void process_f(va_list args, const char **str);
-void process_c(va_list args, const char **str);
-void process_o(va_list args, const char **str);
-void process_x(va_list args, const char **str);
-void process_p(va_list args, const char **str);
-void process_n(va_list args, const char **str);
-void process_u(va_list args, const char **str);
+void spec_parse(const char *spec, const char **str, va_list args, int width);
+int process_width(const char *format, int *width);
+void process_d(va_list args, const char **str, int width);
+void process_i(va_list args, const char **str, int width);
+void process_s(va_list args, const char **str, int width);
+void process_f(va_list args, const char **str, int width);
+void process_c(va_list args, const char **str, int width);
+void process_o(va_list args, const char **str, int width);
+void process_x(va_list args, const char **str, int width);
+void process_p(va_list args, const char **str, int width);
+void process_n(va_list args, const char **str, int width);
+void process_u(va_list args, const char **str, int width);
 void process_percent(const char **str);
 int s21_atoi(const char *str);
 float s21_atof(const char *str);
@@ -24,8 +25,9 @@ int s21_sscanf(const char *str, const char *format, ...) {
   va_start(args, format);
   const char *ptr = str;
   int count = 0;
+  int fail = 0;
 
-  while (*format) {
+  while (!fail && *format) {
     if (*format == ' ') {
       while (*format == ' ') {
         format++;
@@ -33,12 +35,35 @@ int s21_sscanf(const char *str, const char *format, ...) {
       }
     } else if (*format == '%') {
       format++;
-      spec_parse(format, &ptr, args);
+      int width = -1;
+      int skip = 0;
+
+      if (*format == '*') {
+        skip = 1;
+        format++;
+      }
+
+      if (*format >= '0' && *format <= '9') {
+        format += process_width(format, &width);
+      }
+
+      if (skip) {
+        if (width != -1) {
+          ptr += width - 1;
+        } else {
+          while (*ptr && *ptr != ' ') {
+            ptr++;
+          }
+        }
+      } else {
+        spec_parse(format, &ptr, args, width);
+      }
+
       while (*format && *format != ' ') format++;
       count++;
     } else {
       if (*ptr != *format) {
-        break;
+        fail = 1;
       }
       ptr++;
       format++;
@@ -49,59 +74,69 @@ int s21_sscanf(const char *str, const char *format, ...) {
   return count;
 }
 
-void spec_parse(const char *spec, const char **str, va_list args) {
+void spec_parse(const char *spec, const char **str, va_list args, int width) {
   // https://codelessons.dev/ru/scanf-in-c-cplusplus/#%D1%82%D0%B8%D0%BF
   switch (*spec) {
     case '%':
       process_percent(str);
       break;
     case 'd':
-      process_d(args, str);
+      process_d(args, str, width);
       break;
     case 's':
-      process_s(args, str);
+      process_s(args, str, width);
       break;
     case 'c':
-      process_c(args, str);
+      process_c(args, str, width);
       break;
     case 'i':
-      process_i(args, str);
+      process_i(args, str, width);
       break;
     case 'e':
     case 'E':
     case 'g':
     case 'G':
     case 'f':
-      process_f(args, str);
+      process_f(args, str, width);
       break;
     case 'o':
-      process_o(args, str);
+      process_o(args, str, width);
       break;
     case 'u':
-      process_u(args, str);
+      process_u(args, str, width);
       break;
     case 'x':
     case 'X':
-      process_x(args, str);
+      process_x(args, str, width);
       break;
     case 'p':
-      process_p(args, str);
+      process_p(args, str, width);
       break;
     case 'n':
-      process_n(args, str);
+      process_n(args, str, width);
       break;
     default:
       break;
   }
 }
-
+int process_width(const char *spec, int *width) {
+  char num[10];
+  int i = 0;
+  for (; *spec >= '0' && *spec <= '9' && i < sizeof(num); i++) {
+    num[i] = *spec;
+    *(spec)++;
+  }
+  num[i] = '\0';
+  *width = s21_atoi(num);
+  return i;
+}
 void process_percent(const char **str) {
   if (**str == '%') {
     (*str)++;
   }
 }
 
-void process_d(va_list args, const char **str) {
+void process_d(va_list args, const char **str, int width) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
   char num[20];
@@ -114,7 +149,8 @@ void process_d(va_list args, const char **str) {
     pos = 1;
     (*str)++;
   }
-  while (**str >= '0' && **str <= '9' && i < (int)sizeof(num) - 1) {
+  while ((width == -1 || i < width) && **str >= '0' && **str <= '9' &&
+         i < (int)sizeof(num) - 1) {
     num[i++] = **str;
     (*str)++;
   }
@@ -130,7 +166,7 @@ int s21_atoi(const char *str) {
   return result;
 }
 
-void process_s(va_list args, const char **str) {
+void process_s(va_list args, const char **str, int width) {
   char *str_ptr = va_arg(args, char *);
   int i = 0;
 
@@ -141,7 +177,7 @@ void process_s(va_list args, const char **str) {
   str_ptr[i] = '\0';
 }
 
-void process_f(va_list args, const char **str) {
+void process_f(va_list args, const char **str, int width) {
   float *float_ptr = va_arg(args, float *);
   if (float_ptr == s21_NULL) return;
 
@@ -155,9 +191,9 @@ void process_f(va_list args, const char **str) {
   } else if (**str == '+') {
     (*str)++;
   }
-
-  while ((**str >= '0' && **str <= '9') || **str == '.' || **str == 'e' ||
-         **str == 'E' || **str == '-') {
+  int fail = 0;
+  while (!fail && ((**str >= '0' && **str <= '9') || **str == '.' ||
+                   **str == 'e' || **str == 'E' || **str == '-')) {
     if (**str == 'e' || **str == 'E') {
       (*str)++;
       char exp_str[10];
@@ -175,12 +211,12 @@ void process_f(va_list args, const char **str) {
       }
       exp_str[exp_i] = '\0';
       exp *= pow(10, s21_atoi(exp_str));
-      break;
+      fail = 1;
     } else if (i < (int)sizeof(num) - 1) {
       num[i++] = **str;
       (*str)++;
     } else {
-      break;
+      fail = 1;
     }
   }
 
@@ -212,14 +248,14 @@ float s21_atof(const char *str) {
   return result;
 }
 
-void process_c(va_list args, const char **str) {
+void process_c(va_list args, const char **str, int width) {
   char *char_ptr = va_arg(args, char *);
   if (**str != '\0') {
     *char_ptr = **str;
     (*str)++;
   }
 }
-void process_o(va_list args, const char **str) {
+void process_o(va_list args, const char **str, int width) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
 
@@ -243,7 +279,7 @@ void process_o(va_list args, const char **str) {
   *int_ptr = result;
   *str += len;
 }
-void process_x(va_list args, const char **str) {
+void process_x(va_list args, const char **str, int width) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
   int sign = 1;
@@ -279,18 +315,18 @@ void process_x(va_list args, const char **str) {
 
   *str += len;
 }
-void process_i(va_list args, const char **str) {
+void process_i(va_list args, const char **str, int width) {
   s21_size_t len = s21_strlen(*str);
   int pos = (len > 0 && *str[0] == '-') ? 1 : 0;
   if (len >= (s21_size_t)(2 + pos) && (*str)[0 + pos] == '0' &&
       ((*str)[1 + pos] == 'x' || (*str)[1 + pos] == 'X'))
-    process_x(args, str);
+    process_x(args, str, width);
   else if (len >= (s21_size_t)(1 + pos) && (*str)[0 + pos] == '0')
-    process_o(args, str);
+    process_o(args, str, width);
   else
-    process_d(args, str);
+    process_d(args, str, width);
 }
-void process_u(va_list args, const char **str) {
+void process_u(va_list args, const char **str, int width) {
   unsigned int *uint_ptr = va_arg(args, unsigned int *);
   if (uint_ptr == s21_NULL) return;
 
@@ -313,7 +349,7 @@ void process_u(va_list args, const char **str) {
   *str += len;
 }
 
-void process_p(va_list args, const char **str) {
+void process_p(va_list args, const char **str, int width) {
   void **ptr_ptr = va_arg(args, void **);
   if (ptr_ptr == s21_NULL) return;
 
@@ -345,7 +381,7 @@ void process_p(va_list args, const char **str) {
   *str += len;
 }
 
-void process_n(va_list args, const char **str) {
+void process_n(va_list args, const char **str, int width) {
   int *count_ptr = va_arg(args, int *);
   if (count_ptr == s21_NULL) return;
 

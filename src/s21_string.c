@@ -219,19 +219,13 @@ char *s21_strtok(char *str, const char *delim) {
   }
 
   str += s21_strspn(str, delim);
-
+  token = str;
+  str = s21_strpbrk(token, delim);
   if (!str) {
-    str_stat = str;
-    token = NULL;
+    str_stat = NULL;
   } else {
-    token = str;
-    str = s21_strpbrk(token, delim);
-    if (!str) {
-      str_stat = NULL;
-    } else {
-      *str = '\0';
-      str_stat = str + 1;
-    }
+    *str = '\0';
+    str_stat = str + 1;
   }
 
   return token;

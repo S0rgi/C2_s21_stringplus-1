@@ -912,6 +912,15 @@ void memcpy_test(TCase *tcase_core) {
   tcase_add_test(tcase_core, memcpy_test_case_5);
   tcase_add_test(tcase_core, memcpy_test_case_6);
 }
+START_TEST(test_s21_strncpy_null_src) {
+  char dest[100];
+
+  const char *src = NULL;
+  char *result = s21_strncpy(dest, src, 10);
+
+  ck_assert_ptr_eq(result, NULL);
+}
+END_TEST
 START_TEST(strncpy_test_case_1) {
   const char str[] = "Hellol";
   char dest[10] = {0};
@@ -995,6 +1004,7 @@ void strncpy_test(TCase *tcase_core) {
   tcase_add_test(tcase_core, strncpy_test_case_7);
   tcase_add_test(tcase_core, strncpy_test_case_8);
   tcase_add_test(tcase_core, strncpy_test_case_9);
+  tcase_add_test(tcase_core, test_s21_strncpy_null_src);
 }
 START_TEST(strcpy_test_case_1) {
   const char *src = "Hello";

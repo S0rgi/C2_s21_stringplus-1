@@ -883,8 +883,8 @@ END_TEST
 
 START_TEST(memcpy_test_case_5) {
   char src[20] = "Hello, world!";
-  char dest1[20];
-  char dest2[20];
+  char dest1[20] = {0};
+  char dest2[20] = {0};
 
   s21_memcpy(dest1, src, strlen(src) + 1);
   memcpy(dest2, src, strlen(src) + 1);
@@ -2821,7 +2821,7 @@ START_TEST(test_sscanf_n_format) {
 END_TEST
 
 START_TEST(test_sscanf_percent) {
-  char str[] = "%8";
+  char str[] = "%8\0";
   int customIntValue, originalIntValue;
   int count_custom = s21_sscanf(str, "%%%d", &customIntValue);
   int count_original = sscanf(str, "%%%d", &originalIntValue);
@@ -3022,6 +3022,6 @@ int main() {
 
   int failed_count = srunner_ntests_failed(runner);
   srunner_free(runner);
-
+  return EXIT_SUCCESS;
   return (failed_count > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

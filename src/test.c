@@ -898,8 +898,8 @@ START_TEST(memcpy_test_case_6) {
   char dest1[20] = {0};
   char dest2[20] = {0};
 
-  s21_memcpy(dest1 + 5, dest1, 5);
-  memcpy(dest2 + 5, dest2, 5);
+  s21_memcpy(dest1 + 5, src, 5);
+  memcpy(dest2 + 5, src, 5);
 
   ck_assert_mem_eq(dest1, dest2, sizeof(dest1));
 }
@@ -1131,8 +1131,8 @@ END_TEST
 START_TEST(memcmp_test_case_3) {
   char str1[20] = "Hellol";
   char str2[20] = "Helloh";
-  int result_custom = s21_memcmp(str1, str1, 6);
-  int result_standard = memcmp(str1, str1, 6);
+  int result_custom = s21_memcmp(str1, str2, 6);
+  int result_standard = memcmp(str1, str2, 6);
 
   ck_assert_int_eq(result_custom, result_standard);
 }
@@ -1388,8 +1388,8 @@ END_TEST
 START_TEST(strcmp_test_case_2) {
   const char str1[] = "Hellol";
   const char str2[] = "Helloh";
-  int result_custom = s21_strncmp(str1, str1, 6);
-  int result_standard = strncmp(str1, str1, 6);
+  int result_custom = s21_strncmp(str1, str2, 6);
+  int result_standard = strncmp(str1, str2, 6);
 
   ck_assert_int_eq(result_custom, result_standard);
 }
@@ -2872,6 +2872,7 @@ START_TEST(test_sscanf_flags_signed_integer) {
              &num2);  // Same for original sscanfck_assert_int_eq(count_s21,
                       // count_std);  // Compare number of matched fields
   ck_assert_int_eq(num1, num2);  // Compare the actual integer value
+  ck_assert_int_eq(count_s21, count_std);
 }
 END_TEST
 

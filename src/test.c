@@ -2052,7 +2052,288 @@ void trim_test(TCase *tcase_core) {
   tcase_add_test(tcase_core, trim_test_case_8);
   tcase_add_test(tcase_core, trim_test_case_9);
 }
+START_TEST(test_s21_strerror_case_1) {
+  const char *error_message_custom = s21_strerror(0);
+  const char *error_message_standard = strerror(0);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
 
+START_TEST(test_s21_strerror_case_2) {
+  const char *error_message_custom = s21_strerror(EPERM);
+  const char *error_message_standard = strerror(EPERM);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_3) {
+  const char *error_message_custom = s21_strerror(ENOENT);
+  const char *error_message_standard = strerror(ENOENT);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_4) {
+  const char *error_message_custom = s21_strerror(ESRCH);
+  const char *error_message_standard = strerror(ESRCH);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_5) {
+  const char *error_message_custom = s21_strerror(EINTR);
+  const char *error_message_standard = strerror(EINTR);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_6) {
+  const char *error_message_custom = s21_strerror(EIO);
+  const char *error_message_standard = strerror(EIO);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_7) {
+  const char *error_message_custom = s21_strerror(ENXIO);
+  const char *error_message_standard = strerror(ENXIO);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_8) {
+  const char *error_message_custom = s21_strerror(E2BIG);
+  const char *error_message_standard = strerror(E2BIG);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_9) {
+  const char *error_message_custom = s21_strerror(ENOEXEC);
+  const char *error_message_standard = strerror(ENOEXEC);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_10) {
+  const char *error_message_custom = s21_strerror(EBADF);
+  const char *error_message_standard = strerror(EBADF);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_11) {
+  const char *error_message_custom = s21_strerror(ECHILD);
+  const char *error_message_standard = strerror(ECHILD);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_12) {
+  const char *error_message_custom = s21_strerror(EAGAIN);
+  const char *error_message_standard = strerror(EAGAIN);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_13) {
+  const char *error_message_custom = s21_strerror(ENOMEM);
+  const char *error_message_standard = strerror(ENOMEM);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_14) {
+  const char *error_message_custom = s21_strerror(EACCES);
+  const char *error_message_standard = strerror(EACCES);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_15) {
+  const char *error_message_custom = s21_strerror(EFAULT);
+  const char *error_message_standard = strerror(EFAULT);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_16) {
+  const char *error_message_custom = s21_strerror(ENOTBLK);
+  const char *error_message_standard = strerror(ENOTBLK);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_17) {
+  const char *error_message_custom = s21_strerror(EBUSY);
+  const char *error_message_standard = strerror(EBUSY);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_18) {
+  const char *error_message_custom = s21_strerror(EEXIST);
+  const char *error_message_standard = strerror(EEXIST);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_19) {
+  const char *error_message_custom = s21_strerror(EXDEV);
+  const char *error_message_standard = strerror(EXDEV);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_20) {
+  const char *error_message_custom = s21_strerror(ENODEV);
+  const char *error_message_standard = strerror(ENODEV);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_21) {
+  const char *error_message_custom = s21_strerror(ENOTDIR);
+  const char *error_message_standard = strerror(ENOTDIR);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_22) {
+  const char *error_message_custom = s21_strerror(EISDIR);
+  const char *error_message_standard = strerror(EISDIR);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_23) {
+  const char *error_message_custom = s21_strerror(EINVAL);
+  const char *error_message_standard = strerror(EINVAL);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_24) {
+  const char *error_message_custom = s21_strerror(ENFILE);
+  const char *error_message_standard = strerror(ENFILE);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_25) {
+  const char *error_message_custom = s21_strerror(EMFILE);
+  const char *error_message_standard = strerror(EMFILE);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_26) {
+  const char *error_message_custom = s21_strerror(ENOTTY);
+  const char *error_message_standard = strerror(ENOTTY);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_27) {
+  const char *error_message_custom = s21_strerror(ETXTBSY);
+  const char *error_message_standard = strerror(ETXTBSY);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_28) {
+  const char *error_message_custom = s21_strerror(EFBIG);
+  const char *error_message_standard = strerror(EFBIG);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_29) {
+  const char *error_message_custom = s21_strerror(ENOSPC);
+  const char *error_message_standard = strerror(ENOSPC);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_30) {
+  const char *error_message_custom = s21_strerror(ESPIPE);
+  const char *error_message_standard = strerror(ESPIPE);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_31) {
+  const char *error_message_custom = s21_strerror(EROFS);
+  const char *error_message_standard = strerror(EROFS);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_32) {
+  const char *error_message_custom = s21_strerror(EMLINK);
+  const char *error_message_standard = strerror(EMLINK);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_33) {
+  const char *error_message_custom = s21_strerror(EPIPE);
+  const char *error_message_standard = strerror(EPIPE);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_34) {
+  const char *error_message_custom = s21_strerror(EDOM);
+  const char *error_message_standard = strerror(EDOM);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+START_TEST(test_s21_strerror_case_35) {
+  const char *error_message_custom = s21_strerror(ERANGE);
+  const char *error_message_standard = strerror(ERANGE);
+  ck_assert_str_eq(error_message_custom, error_message_standard);
+}
+END_TEST
+
+void test_s21_strerror_cases(TCase *tcase_core) {
+  tcase_add_test(tcase_core, test_s21_strerror_case_1);
+  tcase_add_test(tcase_core, test_s21_strerror_case_2);
+  tcase_add_test(tcase_core, test_s21_strerror_case_3);
+  tcase_add_test(tcase_core, test_s21_strerror_case_4);
+  tcase_add_test(tcase_core, test_s21_strerror_case_5);
+  tcase_add_test(tcase_core, test_s21_strerror_case_6);
+  tcase_add_test(tcase_core, test_s21_strerror_case_7);
+  tcase_add_test(tcase_core, test_s21_strerror_case_8);
+  tcase_add_test(tcase_core, test_s21_strerror_case_9);
+  tcase_add_test(tcase_core, test_s21_strerror_case_10);
+  tcase_add_test(tcase_core, test_s21_strerror_case_11);
+  tcase_add_test(tcase_core, test_s21_strerror_case_12);
+  tcase_add_test(tcase_core, test_s21_strerror_case_13);
+  tcase_add_test(tcase_core, test_s21_strerror_case_14);
+  tcase_add_test(tcase_core, test_s21_strerror_case_15);
+  tcase_add_test(tcase_core, test_s21_strerror_case_16);
+  tcase_add_test(tcase_core, test_s21_strerror_case_17);
+  tcase_add_test(tcase_core, test_s21_strerror_case_18);
+  tcase_add_test(tcase_core, test_s21_strerror_case_19);
+  tcase_add_test(tcase_core, test_s21_strerror_case_20);
+  tcase_add_test(tcase_core, test_s21_strerror_case_21);
+  tcase_add_test(tcase_core, test_s21_strerror_case_22);
+  tcase_add_test(tcase_core, test_s21_strerror_case_23);
+  tcase_add_test(tcase_core, test_s21_strerror_case_24);
+  tcase_add_test(tcase_core, test_s21_strerror_case_25);
+  tcase_add_test(tcase_core, test_s21_strerror_case_26);
+  tcase_add_test(tcase_core, test_s21_strerror_case_27);
+  tcase_add_test(tcase_core, test_s21_strerror_case_28);
+  tcase_add_test(tcase_core, test_s21_strerror_case_29);
+  tcase_add_test(tcase_core, test_s21_strerror_case_30);
+  tcase_add_test(tcase_core, test_s21_strerror_case_31);
+  tcase_add_test(tcase_core, test_s21_strerror_case_32);
+  tcase_add_test(tcase_core, test_s21_strerror_case_33);
+  tcase_add_test(tcase_core, test_s21_strerror_case_34);
+  tcase_add_test(tcase_core, test_s21_strerror_case_35);
+}
 // Tests for s21_sprintf
 START_TEST(test_sprintf_0) {
   char buffer[10512];
@@ -2961,7 +3242,25 @@ START_TEST(test_sscanf_multiple_specifiers) {
   ck_assert_str_eq(str1_s21, str1_std);
 }
 END_TEST
+START_TEST(test_s21_sscanf_basic) {
+  const char *input = "12345 hello";
+  int number;
+  char str[10];
 
+  // Use sscanf to parse the input
+  sscanf(input, "%*00002d %d %5s", &number, str);
+  int expected_number = number;
+  char expected_str[10];
+  strcpy(expected_str, str);
+
+  // Use s21_sscanf to parse the input
+  s21_sscanf(input, "%*00002d %d %5s", &number, str);
+
+  // Check the results
+  ck_assert_int_eq(number, expected_number);
+  ck_assert_str_eq(str, expected_str);
+}
+END_TEST
 void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_char);
   tcase_add_test(tcase_core, test_sscanf_signed_integer);
@@ -2990,6 +3289,7 @@ void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_type_cast_float);
   tcase_add_test(tcase_core, test_sscanf_string_reading);
   tcase_add_test(tcase_core, test_sscanf_multiple_specifiers);
+  tcase_add_test(tcase_core, test_s21_sscanf_basic);
 }
 
 int main() {
@@ -3022,6 +3322,7 @@ int main() {
   test_s21_strerror_nonexistent_file(tcase_core);
   insert_test(tcase_core);
   trim_test(tcase_core);
+  test_s21_strerror_cases(tcase_core);
   s21_sprintf_tests(tcase_core);
   s21_sscanf_tests(tcase_core);
 

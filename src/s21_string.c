@@ -123,16 +123,32 @@ s21_size_t s21_strcspn(const char *str1, const char *str2) {
   return result;
 }
 
+s21_size_t s21_strspn(const char *str1, const char *str2) {
+  s21_size_t result = 0;
+  int found = 0;
+
+  for (s21_size_t i = 0; !found && i < s21_strlen(str1); i++) {
+    if (s21_strchr(str2, str1[i]) == s21_NULL) {
+      found = 1;
+    }
+    if (!found) result++;
+  }
+  return result;
+}
+
 char *s21_strerror(int errnum) {
   static char *error_messages[] = ERRORS;
   static int error_list_length =
       sizeof(error_messages) / sizeof(error_messages[0]);
+  char* result = NULL;
 
   if (errnum < 0 || errnum > error_list_length) {
-    return "Unknown error";
+    result = "Unknown error";
+  } else {
+    result = error_messages[errnum];
   }
 
-  return (char *)error_messages[errnum];
+  return result;
 }
 
 s21_size_t s21_strlen(const char *str) {
@@ -230,20 +246,6 @@ char *s21_strtok(char *str, const char *delim) {
   }
 
   return token;
-}
-
-s21_size_t s21_strspn(const char *str1, const char *str2) {
-  s21_size_t result = 0;
-  int found = 0;
-
-  for (s21_size_t i = 0; !found && i < s21_strlen(str1); i++) {
-    if (s21_strchr(str2, str1[i]) == s21_NULL) {
-      found = 1;
-    } else {
-      result++;
-    }
-  }
-  return result;
 }
 
 void *s21_to_upper(const char *str) {

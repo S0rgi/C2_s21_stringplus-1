@@ -1,4 +1,3 @@
-
 #include <check.h>
 #include <errno.h>
 #include <stdio.h>
@@ -3261,6 +3260,267 @@ START_TEST(test_s21_sscanf_basic) {
   ck_assert_str_eq(str, expected_str);
 }
 END_TEST
+START_TEST(sscanf_width) {
+  int value_custom, value_standard;
+
+  // Тест с числом
+  sscanf("000000042", "%10d", &value_standard);
+  s21_sscanf("000000042", "%10d", &value_custom);
+  ck_assert_int_eq(value_custom, value_standard);
+
+  // Тесты для спецификаторов c, d, i, o, u, x, f, e, g, s, p, n
+  char c_custom, c_standard;
+  sscanf("A", "%1c", &c_standard);
+  s21_sscanf("A", "%1c", &c_custom);
+  ck_assert_int_eq(c_custom, c_standard);
+
+  int d_custom, d_standard;
+  sscanf("12345", "%3d", &d_standard);
+  s21_sscanf("12345", "%3d", &d_custom);
+  ck_assert_int_eq(d_custom, d_standard);
+
+  int i_custom, i_standard;
+  sscanf("12345", "%3i", &i_standard);
+  s21_sscanf("12345", "%3i", &i_custom);
+  ck_assert_int_eq(i_custom, i_standard);
+
+  unsigned int o_custom, o_standard;
+  sscanf("12345", "%3o", &o_standard);
+  s21_sscanf("12345", "%3o", &o_custom);
+  ck_assert_int_eq(o_custom, o_standard);
+
+  unsigned int u_custom, u_standard;
+  sscanf("12345", "%3u", &u_standard);
+  s21_sscanf("12345", "%3u", &u_custom);
+  ck_assert_int_eq(u_custom, u_standard);
+
+  unsigned int x_custom, x_standard;
+  sscanf("12345", "%3x", &x_standard);
+  s21_sscanf("12345", "%3x", &x_custom);
+  ck_assert_int_eq(x_custom, x_standard);
+
+  float f_custom, f_standard;
+  sscanf("123.45", "%5f", &f_standard);
+  s21_sscanf("123.45", "%5f", &f_custom);
+  ck_assert_float_eq(f_custom, f_standard);
+
+  float e_custom, e_standard;
+  sscanf("1.23e2", "%5e", &e_standard);
+  s21_sscanf("1.23e2", "%5e", &e_custom);
+  ck_assert_float_eq(e_custom, e_standard);
+
+  float g_custom, g_standard;
+  sscanf("123.45", "%5g", &g_standard);
+  s21_sscanf("123.45", "%5g", &g_custom);
+  ck_assert_float_eq(g_custom, g_standard);
+
+  char s_custom[10], s_standard[10];
+  sscanf("Hello", "%3s", s_standard);
+  s21_sscanf("Hello", "%3s", s_custom);
+  ck_assert_str_eq(s_custom, s_standard);
+
+  void *p_custom, *p_standard;
+  sscanf("0x12345", "%5p", &p_standard);
+  s21_sscanf("0x12345", "%5p", &p_custom);
+  ck_assert_ptr_eq(p_custom, p_standard);
+
+  int n_custom, n_standard;
+  sscanf("12345", "%3d%n", &d_standard, &n_standard);
+  s21_sscanf("12345", "%3d%n", &d_custom, &n_custom);
+  ck_assert_int_eq(n_custom, n_standard);
+}
+END_TEST
+START_TEST(test_sscanf_short_formats) {
+  char buffer[100];
+  short hd, hi;
+  unsigned short ho, hu, hx;
+  short hd_custom, hi_custom;
+  unsigned short ho_custom, hu_custom, hx_custom;
+
+  // Test with short formats
+  sprintf(buffer, "123 173 123 7b 123");
+  sscanf(buffer, "%hd %ho %hu %hx %hi", &hd, &ho, &hu, &hx, &hi);
+  s21_sscanf(buffer, "%hd %ho %hu %hx %hi", &hd_custom, &ho_custom, &hu_custom,
+             &hx_custom, &hi_custom);
+
+  ck_assert_int_eq(hd, hd_custom);
+  ck_assert_int_eq(ho, ho_custom);
+  ck_assert_int_eq(hu, hu_custom);
+  ck_assert_int_eq(hx, hx_custom);
+  ck_assert_int_eq(hi, hi_custom);
+
+  long ld, li;
+  unsigned long lo, lu, lx;
+  long ld_custom, li_custom;
+  unsigned long lo_custom, lu_custom, lx_custom;
+
+  // Test with long formats
+  sprintf(buffer, "123456 361100 123456 1E240 123456");
+  sscanf(buffer, "%ld %lo %lu %lx %li", &ld, &lo, &lu, &lx, &li);
+  s21_sscanf(buffer, "%ld %lo %lu %lx %li", &ld_custom, &lo_custom, &lu_custom,
+             &lx_custom, &li_custom);
+
+  ck_assert_int_eq(ld, ld_custom);
+  ck_assert_int_eq(lo, lo_custom);
+  ck_assert_int_eq(lu, lu_custom);
+  ck_assert_int_eq(lx, lx_custom);
+  ck_assert_int_eq(li, li_custom);
+
+  long double Le, LE, Lf, Lg, LG;
+  long double Le_custom, LE_custom, Lf_custom, Lg_custom, LG_custom;
+
+  // Test with long double formats
+  sprintf(buffer, "1.23e2 1.23E2 123.456 123.456 123.456");
+  sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le, &LE, &Lf, &Lg, &LG);
+  s21_sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le_custom, &LE_custom, &Lf_custom,
+             &Lg_custom, &LG_custom);
+
+  ck_assert_double_eq_tol(Le, Le_custom, 0.001);
+  ck_assert_double_eq_tol(LE, LE_custom, 0.001);
+  ck_assert_double_eq_tol(Lf, Lf_custom, 0.001);
+  ck_assert_double_eq_tol(Lg, Lg_custom, 0.001);
+  ck_assert_double_eq_tol(LG, LG_custom, 0.001);
+}
+END_TEST
+
+START_TEST(test_sscanf_all_formats) {
+  char buffer[200];
+
+  // Test with char (hh) formats
+  signed char hhd, hhi;
+  unsigned char hho, hhu, hhx;
+  signed char hhd_custom, hhi_custom;
+  unsigned char hho_custom, hhu_custom, hhx_custom;
+
+  sprintf(buffer, "123 173 123 7b 123");
+  sscanf(buffer, "%hhd %hho %hhu %hhx %hhi", &hhd, &hho, &hhu, &hhx, &hhi);
+  s21_sscanf(buffer, "%hhd %hho %hhu %hhx %hhi", &hhd_custom, &hho_custom,
+             &hhu_custom, &hhx_custom, &hhi_custom);
+
+  ck_assert_int_eq(hhd, hhd_custom);
+  ck_assert_int_eq(hho, hho_custom);
+  ck_assert_int_eq(hhu, hhu_custom);
+  ck_assert_int_eq(hhx, hhx_custom);
+  ck_assert_int_eq(hhi, hhi_custom);
+
+  // Test with long long (ll) formats
+  long long lld, lli;
+  unsigned long long llo, llu, llx;
+  long long lld_custom, lli_custom;
+  unsigned long long llo_custom, llu_custom, llx_custom;
+
+  sprintf(buffer, "123456789 173456 123456789 75BCD15 123456789");
+  sscanf(buffer, "%lld %llo %llu %llx %lli", &lld, &llo, &llu, &llx, &lli);
+  s21_sscanf(buffer, "%lld %llo %llu %llx %lli", &lld_custom, &llo_custom,
+             &llu_custom, &llx_custom, &lli_custom);
+
+  ck_assert_int_eq(lld, lld_custom);
+  ck_assert_int_eq(llo, llo_custom);
+  ck_assert_int_eq(llu, llu_custom);
+  ck_assert_int_eq(llx, llx_custom);
+  ck_assert_int_eq(lli, lli_custom);
+
+  // Test with float formats without 'L'
+  float e, E, f, g, G;
+  float e_custom, E_custom, f_custom, g_custom, G_custom;
+
+  sprintf(buffer, "1.23e2 1.23E2 123.456 123.456 123.456");
+  sscanf(buffer, "%e %E %f %g %G", &e, &E, &f, &g, &G);
+  s21_sscanf(buffer, "%e %E %f %g %G", &e_custom, &E_custom, &f_custom,
+             &g_custom, &G_custom);
+
+  ck_assert_float_eq_tol(e, e_custom, 0.001);
+  ck_assert_float_eq_tol(E, E_custom, 0.001);
+  ck_assert_float_eq_tol(f, f_custom, 0.001);
+  ck_assert_float_eq_tol(g, g_custom, 0.001);
+  ck_assert_float_eq_tol(G, G_custom, 0.001);
+
+  // Test with long double formats with 'L'
+  long double Le, LE, Lf, Lg, LG;
+  long double Le_custom, LE_custom, Lf_custom, Lg_custom, LG_custom;
+
+  sprintf(buffer, "1.23e2 1.23E2 123.456 123.456 123.456");
+  sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le, &LE, &Lf, &Lg, &LG);
+  s21_sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le_custom, &LE_custom, &Lf_custom,
+             &Lg_custom, &LG_custom);
+
+  ck_assert_double_eq_tol(Le, Le_custom, 0.001);
+  ck_assert_double_eq_tol(LE, LE_custom, 0.001);
+  ck_assert_double_eq_tol(Lf, Lf_custom, 0.001);
+  ck_assert_double_eq_tol(Lg, Lg_custom, 0.001);
+  ck_assert_double_eq_tol(LG, LG_custom, 0.001);
+}
+END_TEST
+
+// Test for width specifier with * in sscanf
+START_TEST(test_sscanf_width_with_star) {
+  const char *input = "12345 hello";
+  int number;
+  char str[10];
+
+  // Use sscanf to parse the input
+  sscanf(input, "%*2d %d %5s", &number, str);
+  int expected_number = number;
+  char expected_str[10];
+  strcpy(expected_str, str);
+
+  // Use s21_sscanf to parse the input
+  s21_sscanf(input, "%*2d %d %5s", &number, str);
+
+  // Check the results
+  ck_assert_int_eq(number, expected_number);
+  ck_assert_str_eq(str, expected_str);
+}
+END_TEST
+
+// Test for precision specifier with * in sscanf
+START_TEST(test_sscanf_precision_with_star) {
+  const char *input = "123.456";
+  float number;
+
+  // Use sscanf to parse the input
+  sscanf(input, "%f", &number);
+  float expected_number = number;
+
+  // Use s21_sscanf to parse the input
+  s21_sscanf(input, "%f", &number);
+
+  // Check the results
+  ck_assert_float_eq(number, expected_number);
+}
+END_TEST
+
+// Test for width and precision specifier with * in sscanf
+START_TEST(test_sscanf_width_and_precision_with_star) {
+  const char *input = "123.456";
+  float number;
+
+  // Use sscanf to parse the input
+  sscanf(input, "%f", &number);
+  float expected_number = number;
+
+  // Use s21_sscanf to parse the input
+  s21_sscanf(input, "%f", &number);
+
+  // Check the results
+  ck_assert_float_eq(number, expected_number);
+}
+END_TEST
+
+// Test for width specifier with * in sscanf for strings
+START_TEST(test_sscanf_width_with_star_string) {
+  const char *input = "teststring";
+  char buffer1[50], buffer2[50];
+
+  // Use sscanf to parse the input
+  sscanf(input, "%*4s %s", buffer1);
+  s21_sscanf(input, "%*4s %s", buffer2);
+
+  // Check the results
+  ck_assert_str_eq(buffer1, buffer2);
+}
+END_TEST
+
 void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_char);
   tcase_add_test(tcase_core, test_sscanf_signed_integer);
@@ -3290,6 +3550,13 @@ void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_string_reading);
   tcase_add_test(tcase_core, test_sscanf_multiple_specifiers);
   tcase_add_test(tcase_core, test_s21_sscanf_basic);
+  tcase_add_test(tcase_core, test_sscanf_short_formats);
+  tcase_add_test(tcase_core, test_sscanf_all_formats);
+  tcase_add_test(tcase_core, sscanf_width);
+  tcase_add_test(tcase_core, test_sscanf_width_with_star);
+  tcase_add_test(tcase_core, test_sscanf_precision_with_star);
+  tcase_add_test(tcase_core, test_sscanf_width_and_precision_with_star);
+  tcase_add_test(tcase_core, test_sscanf_width_with_star_string);
 }
 
 int main() {
@@ -3334,6 +3601,5 @@ int main() {
 
   int failed_count = srunner_ntests_failed(runner);
   srunner_free(runner);
-  return EXIT_SUCCESS;
   return (failed_count > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

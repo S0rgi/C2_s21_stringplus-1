@@ -8,7 +8,7 @@ typedef struct {
   int l;
   int L;
 } Width_S;
-void spec_parse(const char *spec, const char **str, va_list args, int width);
+void spec_parse(const char **format, const char **str, va_list args, int width);
 int process_width(const char *format, int *width);
 void process_d(va_list args, const char **str, int width);
 void process_i(va_list args, const char **str, int width);
@@ -20,8 +20,8 @@ void process_x(va_list args, const char **str, int width);
 void process_p(va_list args, const char **str);
 void process_n(va_list args, const char **str);
 void process_u(va_list args, const char **str, int width);
-int parce_width(Width_S opt, const char *format);
-void process_percent(const char **str);
+void parce_width(const char **format);
+void process_percent(const char **str, const char **format);
 int s21_atoi(const char *str);
 float s21_atof(const char *str);
 
@@ -50,7 +50,7 @@ int s21_sscanf(const char *str, const char *format, ...) {
       if (*format >= '0' && *format <= '9') {
         format += process_width(format, &width);
       }
-      format += parce_width(opt, format);
+      parce_width(&format);
       if (skip) {
         if (width != -1) {
           ptr += width - 1;
@@ -65,7 +65,7 @@ int s21_sscanf(const char *str, const char *format, ...) {
           format++;
           break;
         }
-        spec_parse(format, &ptr, args, width);
+        spec_parse(&format, &ptr, args, width);
       }
 
       while (*format && *format != ' ') format++;
@@ -82,27 +82,17 @@ int s21_sscanf(const char *str, const char *format, ...) {
   va_end(args);
   return count;
 }
-int parce_width(Width_S opt, const char *format) {
-  switch (*format) {
-    case 'h':
-      opt.h = 1;
-      break;
-    case 'l':
-      opt.l = 1;
-      break;
-    case 'L':
-      opt.L = 1;
-      break;
-    default:
-      break;
+void parce_width(const char **format) {
+  while (**format == 'h' || **format == 'l' || **format == 'L') {
+    (*format)++;
   }
-  return opt.h || opt.l || opt.L;
 }
-void spec_parse(const char *spec, const char **str, va_list args, int width) {
+void spec_parse(const char **format, const char **str, va_list args,
+                int width) {
   // https://codelessons.dev/ru/scanf-in-c-cplusplus/#%D1%82%D0%B8%D0%BF
-  switch (*spec) {
+  switch (**format) {
     case '%':
-      process_percent(str);
+      process_percent(str, format);
       break;
     case 'd':
       process_d(args, str, width);
@@ -155,9 +145,10 @@ int process_width(const char *format, int *width) {
   return i;
 }
 
-void process_percent(const char **str) {
+void process_percent(const char **str, const char **format) {
   if (**str == '%') {
     (*str)++;
+    (*format)++;
   }
 }
 
@@ -282,66 +273,53 @@ void process_c(va_list args, const char **str) {
     (*str)++;
   }
 }
+
 void process_o(va_list args, const char **str, int width) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == s21_NULL) return;
-
   int result = 0;
-  int base = 1;
-  if (**str == '-') {
-    base = -1;
-    (*str)++;
-  }
-  int fail = 0;
-  s21_size_t len = s21_strlen(*str);
-  for (s21_size_t i = 0; (width == -1 || (int)i < width) && i < len && !fail;
-       i++) {
-    if ((*str)[i] >= '0' && (*str)[i] <= '7') {
-      result = result * 8 + ((*str)[i] - '0');
-    } else {
-      result = 0;
-      fail = 1;
-    }
-  }
-  *int_ptr = result * base;
-  *str += len;
-}
-void process_x(va_list args, const char **str, int width) {
-  int *int_ptr = va_arg(args, int *);
-  if (int_ptr == s21_NULL) return;
-
   int sign = 1;
-  int result = 0;
-  int fail = 0;
-  s21_size_t len = s21_strlen(*str);
-
   if (**str == '-') {
     sign = -1;
     (*str)++;
-    len--;
   }
+  while (**str && (width == -1 || width-- > 0) &&
+         (**str >= '0' && **str <= '7')) {
+    result = result * 8 + (**str - '0');
+    (*str)++;
+  }
+  *int_ptr = result * sign;
+}
 
-  if (len >= 2 && (*str)[0] == '0' && ((*str)[1] == 'x' || (*str)[1] == 'X')) {
+void process_x(va_list args, const char **str, int width) {
+  int *int_ptr = va_arg(args, int *);
+  if (int_ptr == s21_NULL) return;
+  int sign = 1;
+  int result = 0;
+  int fail = 0;
+  if (**str == '-') {
+    sign = -1;
+    (*str)++;
+  }
+  if (**str == '0' && ((*str)[1] == 'x' || (*str)[1] == 'X')) {
     *str += 2;
-    len -= 2;
   }
 
-  for (s21_size_t i = 0; (width == -1 || (int)i < width) && i < len && !fail;
-       i++) {
-    if ((*str)[i] >= '0' && (*str)[i] <= '9') {
-      result = result * 16 + ((*str)[i] - '0');
-    } else if ((*str)[i] >= 'a' && (*str)[i] <= 'f') {
-      result = result * 16 + ((*str)[i] - 'a' + 10);
-    } else if ((*str)[i] >= 'A' && (*str)[i] <= 'F') {
-      result = result * 16 + ((*str)[i] - 'A' + 10);
-    } else {
-      result = 0;
-      fail = 1;
+  while (**str && (width == -1 || width-- > 0) &&
+         ((**str >= '0' && **str <= '9') || (**str >= 'a' && **str <= 'f') ||
+          (**str >= 'A' && **str <= 'F'))) {
+    if (**str >= '0' && **str <= '9') {
+      result = result * 16 + (**str - '0');
+      (*str)++;
+    } else if (**str >= 'a' && **str <= 'f') {
+      result = result * 16 + (**str - 'a' + 10);
+      (*str)++;
+    } else if (**str >= 'A' && **str <= 'F') {
+      result = result * 16 + (**str - 'A' + 10);
+      (*str)++;
     }
   }
-
   *int_ptr = result * sign;
-  *str += len;
 }
 void process_i(va_list args, const char **str, int width) {
   s21_size_t len = s21_strlen(*str);
@@ -360,20 +338,16 @@ void process_u(va_list args, const char **str, int width) {
 
   unsigned int result = 0;
   int fail = 0;
-  s21_size_t len = s21_strlen(*str);
 
-  for (s21_size_t i = 0; (width == -1 || (int)i < width) && i < len && !fail;
-       i++) {
-    if ((*str)[i] >= '0' && (*str)[i] <= '9') {
-      result = result * 10 + ((*str)[i] - '0');
-    } else {
-      result = 0;
-      fail = 1;
+  while (**str && (width == -1 || width-- > 0) &&
+         (**str >= '0' && **str <= '9')) {
+    if (**str >= '0' && **str <= '9') {
+      result = result * 10 + (**str - '0');
+      (*str)++;
     }
   }
 
   *uint_ptr = result;
-  *str += len;
 }
 
 void process_p(va_list args, const char **str) {

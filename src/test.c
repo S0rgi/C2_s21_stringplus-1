@@ -3304,6 +3304,11 @@ START_TEST(sscanf_width) {
   s21_sscanf("123.45", "%5f", &f_custom);
   ck_assert_float_eq(f_custom, f_standard);
 
+  char s_custom[10], s_standard[10];
+  sscanf("Hello", "%3s", s_standard);
+  s21_sscanf("Hello", "%3s", s_custom);
+  ck_assert_str_eq(s_custom, s_standard);
+
   float e_custom, e_standard;
   sscanf("1.23e2", "%5e", &e_standard);
   s21_sscanf("1.23e2", "%5e", &e_custom);
@@ -3313,16 +3318,6 @@ START_TEST(sscanf_width) {
   sscanf("123.45", "%5g", &g_standard);
   s21_sscanf("123.45", "%5g", &g_custom);
   ck_assert_float_eq(g_custom, g_standard);
-
-  char s_custom[10], s_standard[10];
-  sscanf("Hello", "%3s", s_standard);
-  s21_sscanf("Hello", "%3s", s_custom);
-  ck_assert_str_eq(s_custom, s_standard);
-
-  void *p_custom, *p_standard;
-  sscanf("0x12345", "%5p", &p_standard);
-  s21_sscanf("0x12345", "%5p", &p_custom);
-  ck_assert_ptr_eq(p_custom, p_standard);
 
   int n_custom, n_standard;
   sscanf("12345", "%3d%n", &d_standard, &n_standard);

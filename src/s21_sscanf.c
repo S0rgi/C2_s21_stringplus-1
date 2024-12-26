@@ -55,15 +55,10 @@ int s21_sscanf(const char *str, const char *format, ...) {
           }
         }
       } else {
-        if (*format == '%') {
-          ptr += (*ptr == '%') ? 1 : 0;
-          format++;
-          break;
-        }
         spec_parse(&format, &ptr, args, width, str, &count);
       }
 
-      while (*format && *format != ' ') format++;
+      while (*format && *format != ' ' && *format != '%') format++;
     } else {
       if (*ptr != *format) {
         fail = 1;
@@ -72,7 +67,6 @@ int s21_sscanf(const char *str, const char *format, ...) {
       format++;
     }
   }
-
   va_end(args);
   return count;
 }
@@ -87,6 +81,7 @@ void spec_parse(const char **format, const char **str, va_list args, int width,
   switch (**format) {
     case '%':
       process_percent(str, format);
+      count--;
       break;
     case 'd':
       process_d(args, str, width);
@@ -144,12 +139,9 @@ int process_width(const char *format, int *width) {
 void process_percent(const char **str, const char **format) {
   if (**str == '%') {
     (*str)++;
-    (*format) += 2;
+    (*format)++;
   }
 }
-#include <stdarg.h>
-#include <stdlib.h>
-
 void process_d(va_list args, const char **str, int width) {
   int *int_ptr = va_arg(args, int *);
   if (int_ptr == NULL) return;
@@ -191,10 +183,6 @@ void process_s(va_list args, const char **str, int width) {
   }
   str_ptr[i] = '\0';
 }
-
-#include <math.h>
-#include <stdarg.h>
-#include <stdlib.h>
 
 void process_f(va_list args, const char **str, int width) {
   float *float_ptr = va_arg(args, float *);
@@ -243,7 +231,7 @@ void process_f(va_list args, const char **str, int width) {
 
   if (i > 0) {
     num[i] = '\0';
-    *float_ptr = pos * (float)atof(num) * pow(10, exponent);
+    *float_ptr = pos * (float)s21_atof(num) * pow(10, exponent);
   } else {
     *float_ptr = 0.0f;
   }
@@ -387,5 +375,5 @@ void process_n(va_list args, const char **str, const char *nach_str) {
   int *count_ptr = va_arg(args, int *);
   if (count_ptr == s21_NULL) return;
 
-  *count_ptr = nach_str - (*str);
+  *count_ptr = fabs(nach_str - (*str));
 }

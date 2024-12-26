@@ -723,7 +723,6 @@ START_TEST(strncat_test_case_10) {
   strcpy(dest1, "Hello");
   strcpy(dest2, "Hello");
   s21_strncat(dest1, str, 5);
-  // No corresponding strncat call because it does not handle NULL
   ck_assert_str_eq(dest1, "Hello");
 }
 END_TEST
@@ -999,7 +998,6 @@ void strncpy_test(TCase *tcase_core) {
   tcase_add_test(tcase_core, strncpy_test_case_3);
   tcase_add_test(tcase_core, strncpy_test_case_4);
   tcase_add_test(tcase_core, strncpy_test_case_5);
-  // tcase_add_test(tcase_core, strncpy_test_case_6); не корректен
   tcase_add_test(tcase_core, strncpy_test_case_7);
   tcase_add_test(tcase_core, strncpy_test_case_8);
   tcase_add_test(tcase_core, strncpy_test_case_9);
@@ -3290,37 +3288,31 @@ END_TEST
 // Test for width specifier with string
 START_TEST(test_sscanf_width_string) {
   char buffer1[50], buffer2[50];
-  int count_s21 =
-      s21_sscanf("hello world", "%5s", buffer1);  // Read first 5 characters
-  int count_std =
-      sscanf("hello world", "%5s", buffer2);  // Same for original sscanf
+  int count_s21 = s21_sscanf("hello world", "%5s", buffer1);
+  int count_std = sscanf("hello world", "%5s", buffer2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_str_eq(buffer1, buffer2);      // Compare the actual string read
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_str_eq(buffer1, buffer2);
 }
 END_TEST
 
 // Test for width specifier with integer
 START_TEST(test_sscanf_width_integer) {
   int num1, num2;
-  int count_s21 = s21_sscanf("1234", "%3d", &num1);  // Read first 3 digits
-  int count_std = sscanf("1234", "%3d", &num2);      // Same for original sscanf
+  int count_s21 = s21_sscanf("1234", "%3d", &num1);
+  int count_std = sscanf("1234", "%3d", &num2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_int_eq(num1, num2);            // Compare the actual integer value
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_int_eq(num1, num2);
 }
 END_TEST
 
 // Test for flags with signed integers (e.g., %+d)
 START_TEST(test_sscanf_flags_signed_integer) {
   int num1, num2;
-  int count_s21 = s21_sscanf(
-      "+1234", "%d", &num1);  // Expecting a signed integer with '+' flag
-  int count_std =
-      sscanf("+1234", "%d",
-             &num2);  // Same for original sscanfck_assert_int_eq(count_s21,
-                      // count_std);  // Compare number of matched fields
-  ck_assert_int_eq(num1, num2);  // Compare the actual integer value
+  int count_s21 = s21_sscanf("+1234", "%d", &num1);
+  int count_std = sscanf("+1234", "%d", &num2);
+  ck_assert_int_eq(num1, num2);
   ck_assert_int_eq(count_s21, count_std);
 }
 END_TEST
@@ -3328,52 +3320,47 @@ END_TEST
 // Test for flags with zero padding for integers (e.g., %06d)
 START_TEST(test_sscanf_flags_zero_padding) {
   int num1, num2;
-  int count_s21 =
-      s21_sscanf("001234", "%06d", &num1);  // Expecting zero-padded integer
-  int count_std = sscanf("001234", "%06d", &num2);  // Same for original sscanf
+  int count_s21 = s21_sscanf("001234", "%06d", &num1);
+  int count_std = sscanf("001234", "%06d", &num2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_int_eq(num1, num2);            // Compare the actual integer value
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_int_eq(num1, num2);
 }
 END_TEST
 
 // Test for type casting with unsigned integers
 START_TEST(test_sscanf_type_cast_unsigned) {
   unsigned int u1, u2;
-  int count_s21 = s21_sscanf("12345", "%u", &u1);  // Read unsigned integer
-  int count_std = sscanf("12345", "%u", &u2);      // Same for original sscanf
+  int count_s21 = s21_sscanf("12345", "%u", &u1);
+  int count_std = sscanf("12345", "%u", &u2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_uint_eq(u1, u2);  // Compare the actual unsigned integer value
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_uint_eq(u1, u2);
 }
 END_TEST
 
 // Test for type casting with floating-point numbers
 START_TEST(test_sscanf_type_cast_float) {
   float f1, f2;
-  int count_s21 =
-      s21_sscanf("3.14159", "%f", &f1);          // Read floating-point number
-  int count_std = sscanf("3.14159", "%f", &f2);  // Same for original sscanf
+  int count_s21 = s21_sscanf("3.14159", "%f", &f1);
+  int count_std = sscanf("3.14159", "%f", &f2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_float_eq(f1, f2);  // Compare the actual float values (within
-                               // epsilon for floating-point precision)
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_float_eq(f1, f2);
 }
 END_TEST
 
 // Test for reading a string with %s
 START_TEST(test_sscanf_string_reading) {
   char str1[50], str2[50];
-  int count_s21 = s21_sscanf("hello world", "%s", str1);  // Read string
-  int count_std =
-      sscanf("hello world", "%s", str2);  // Same for original sscanf
+  int count_s21 = s21_sscanf("hello world", "%s", str1);
+  int count_std = sscanf("hello world", "%s", str2);
 
-  ck_assert_int_eq(count_s21, count_std);  // Compare number of matched fields
-  ck_assert_str_eq(str1, str2);            // Compare the actual string read
+  ck_assert_int_eq(count_s21, count_std);
+  ck_assert_str_eq(str1, str2);
 }
 END_TEST
 
-// Test for multiple format specifiers (%d %s %d)
 // Test for multiple format specifiers (%d %s %d)
 START_TEST(test_sscanf_multiple_specifiers) {
   int num1_s21, num2_s21;
@@ -3381,22 +3368,17 @@ START_TEST(test_sscanf_multiple_specifiers) {
   char str1_s21[50];
   char str1_std[50];
 
-  // Using s21_sscanf to read and assign values correctly
   int count_s21 =
       s21_sscanf("123 hello 456", "%d %s %d", &num1_s21, str1_s21, &num2_s21);
 
-  // Using standard sscanf to read and assign values correctly
   int count_std =
       sscanf("123 hello 456", "%d %s %d", &num1_std, str1_std, &num2_std);
 
-  // Compare the number of successfully matched fields
   ck_assert_int_eq(count_s21, count_std);
 
-  // Compare the integer values read from both functions
   ck_assert_int_eq(num1_s21, num1_std);
   ck_assert_int_eq(num2_s21, num2_std);
 
-  // Compare the string values read from both functions
   ck_assert_str_eq(str1_s21, str1_std);
 }
 END_TEST
@@ -3405,16 +3387,13 @@ START_TEST(test_s21_sscanf_basic) {
   int number;
   char str[10];
 
-  // Use sscanf to parse the input
   sscanf(input, "%*00002d %d %5s", &number, str);
   int expected_number = number;
   char expected_str[10];
   strcpy(expected_str, str);
 
-  // Use s21_sscanf to parse the input
   s21_sscanf(input, "%*00002d %d %5s", &number, str);
 
-  // Check the results
   ck_assert_int_eq(number, expected_number);
   ck_assert_str_eq(str, expected_str);
 }
@@ -3515,7 +3494,6 @@ START_TEST(test_sscanf_short_formats) {
   short hd_custom, hi_custom;
   unsigned short ho_custom, hu_custom, hx_custom;
 
-  // Test with short formats
   sprintf(buffer, "123 173 123 7b 123");
   sscanf(buffer, "%hd %ho %hu %hx %hi", &hd, &ho, &hu, &hx, &hi);
   s21_sscanf(buffer, "%hd %ho %hu %hx %hi", &hd_custom, &ho_custom, &hu_custom,
@@ -3536,7 +3514,6 @@ START_TEST(test_sscanf_long_formats) {
   long ld_custom, li_custom;
   unsigned long lo_custom, lu_custom, lx_custom;
 
-  // Test with long formats
   sprintf(buffer, "123456 361100 123456 1E240 123456");
   sscanf(buffer, "%ld %lo %lu %lx %li", &ld, &lo, &lu, &lx, &li);
   s21_sscanf(buffer, "%ld %lo %lu %lx %li", &ld_custom, &lo_custom, &lu_custom,
@@ -3555,7 +3532,6 @@ START_TEST(test_sscanf_long_double_formats) {
   long double Le, LE, Lf, Lg, LG;
   long double Le_custom, LE_custom, Lf_custom, Lg_custom, LG_custom;
 
-  // Test with long double formats
   sprintf(buffer, "1.23e2 1.23E2 123.456 123.456 123.456");
   sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le, &LE, &Lf, &Lg, &LG);
   s21_sscanf(buffer, "%Le %LE %Lf %Lg %LG", &Le_custom, &LE_custom, &Lf_custom,
@@ -3632,16 +3608,13 @@ START_TEST(test_sscanf_width_with_star) {
   int number;
   char str[10];
 
-  // Use sscanf to parse the input
   sscanf(input, "%*2d %d %5s", &number, str);
   int expected_number = number;
   char expected_str[10];
   strcpy(expected_str, str);
 
-  // Use s21_sscanf to parse the input
   s21_sscanf(input, "%*2d %d %5s", &number, str);
 
-  // Check the results
   ck_assert_int_eq(number, expected_number);
   ck_assert_str_eq(str, expected_str);
 }
@@ -3652,14 +3625,11 @@ START_TEST(test_sscanf_precision_with_star) {
   const char *input = "123.456";
   float number;
 
-  // Use sscanf to parse the input
   sscanf(input, "%f", &number);
   float expected_number = number;
 
-  // Use s21_sscanf to parse the input
   s21_sscanf(input, "%f", &number);
 
-  // Check the results
   ck_assert_float_eq(number, expected_number);
 }
 END_TEST
@@ -3669,14 +3639,11 @@ START_TEST(test_sscanf_width_and_precision_with_star) {
   const char *input = "123.456";
   float number;
 
-  // Use sscanf to parse the input
   sscanf(input, "%f", &number);
   float expected_number = number;
 
-  // Use s21_sscanf to parse the input
   s21_sscanf(input, "%f", &number);
 
-  // Check the results
   ck_assert_float_eq(number, expected_number);
 }
 END_TEST
@@ -3686,11 +3653,9 @@ START_TEST(test_sscanf_width_with_star_string) {
   const char *input = "teststring";
   char buffer1[50], buffer2[50];
 
-  // Use sscanf to parse the input
   sscanf(input, "%*4s %s", buffer1);
   s21_sscanf(input, "%*4s %s", buffer2);
 
-  // Check the results
   ck_assert_str_eq(buffer1, buffer2);
 }
 END_TEST

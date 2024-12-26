@@ -19,7 +19,7 @@ typedef struct {
 
 void check_resize(char* buf, s21_size_t* max_size);
 void wchar_to_str(char* str, flags fl, wchar_t c, s21_size_t max_size);
-void char_to_str(char* str, flags fl, char c);
+void char_to_str(char* str, flags fl, char c, s21_size_t max_size);
 void process_char(char* str, flags fl, va_list args, s21_size_t max_size);
 void int_to_str(char* str, flags fl, int64_t num, s21_size_t max_size);
 void int_to_arr(char* str, flags fl, int digit_count, char* buff, int minus);

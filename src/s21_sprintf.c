@@ -48,7 +48,10 @@ void wchar_to_str(char *str, flags fl, wchar_t c, s21_size_t max_size) {
   }
 }
 
-void char_to_str(char *str, flags fl, char c) {
+void char_to_str(char *str, flags fl, char c, s21_size_t max_size) {
+  for (s21_size_t i = 0; i < max_size; i++) {
+    *(str + i) = '\0';
+  }
   if (fl.minus) {
     *str = c;
     str++;
@@ -65,9 +68,7 @@ void char_to_str(char *str, flags fl, char c) {
     for (int i = 1; i < fl.width; i++, str++) {
       *str = fl.specifier;
     }
-
     *str = c;
-
     if (fl.width == 0) {
       str++;
       *str = '\0';
@@ -83,7 +84,7 @@ void process_char(char *str, flags fl, va_list args, s21_size_t max_size) {
     wchar_to_str(str, fl, c, max_size);
   } else {
     char c = va_arg(args, int);
-    char_to_str(str, fl, c);
+    char_to_str(str, fl, c, max_size);
   }
 }
 
@@ -271,42 +272,50 @@ void wchar_t_str_str(char **str, flags fl, const wchar_t *c,
     buf = malloc(*max_size);
   }
   wcstombs(buf, c, *max_size);
+  int char_writed = 0;
   if (fl.precision) {
     buf[fl.precision] = '\0';
   }
   int a = s21_strlen(buf);
+  char *cpy_str = *str;
   if (fl.minus) {
-    wcstombs(*str, c, *max_size);
-    s21_strcpy(*str, buf);
+    wcstombs(cpy_str, c, *max_size);
+    s21_strcpy(cpy_str, buf);
     for (int i = a; i < fl.width; i++) {
-      *(*str + i) = fl.specifier;
+      *(cpy_str + i) = fl.specifier;
+      char_writed++;
     }
   } else {
     for (int i = 0; i < fl.width; i++) {
-      *(*str + i) = fl.specifier;
+      *(cpy_str + i) = fl.specifier;
+      char_writed++;
     }
-    char *cpy_str = *str;
+
     if (fl.width > a) {
-      for (int i = 0; i < fl.width - a; i++, *cpy_str++) {
+      for (int i = 0; i < fl.width - a; i++) {
+        cpy_str++;
       }
     }
     wcstombs(cpy_str, c, *max_size);
     s21_strcpy(cpy_str, buf);
   }
+  char *begin_str = *str;
+  *(begin_str + char_writed + a) = '\0';
   free(buf);
 }
 
 void str_str(char **str, flags fl, const char *c, s21_size_t *max_size) {
   char *buf;
-  if (*max_size < s21_strlen(c) + 10) {
-    *str = realloc(*str, s21_strlen(c) + 10);
+  if (*max_size < s21_strlen(c) * 10) {
+    *str = realloc(*str, s21_strlen(c) * 10);
 
-    buf = malloc(s21_strlen(c) + 10);
-    *max_size = s21_strlen(c) + 10;
+    buf = malloc(s21_strlen(c) * 10);
+    *max_size = s21_strlen(c) * 10;
   } else {
     buf = malloc(*max_size);
   }
   char *cpy_str = *str;
+
   for (s21_size_t i = 0; i < *max_size; i++) {
     *(cpy_str + i) = fl.specifier;
   }
@@ -316,13 +325,13 @@ void str_str(char **str, flags fl, const char *c, s21_size_t *max_size) {
   int a = s21_strlen(buf);
   int char_writed = 0;
 
-  if (fl.precision) {
+  if (fl.precision > 0) {
     buf[fl.precision] = '\0';
   }
-
+  int flag = 0;
   if (fl.precision < 0) {
-    a = 0;
-    char_writed = 0;
+    flag = 1;
+    fl.width = a + fl.width;
   }
   if (fl.minus) {
     if (fl.precision != -2) {
@@ -332,14 +341,13 @@ void str_str(char **str, flags fl, const char *c, s21_size_t *max_size) {
       *(cpy_str + i) = fl.specifier;
       char_writed++;
     }
-
   } else {
     for (int i = a; i < fl.width; i++) {
       *(cpy_str + i) = fl.specifier;
       char_writed++;
     }
     if (fl.width > a) {
-      for (int i = 0; i < fl.width - a; i++, *cpy_str++) {
+      for (int i = 0; i < fl.width - a; i++, cpy_str++) {
       }
     }
 
@@ -347,8 +355,12 @@ void str_str(char **str, flags fl, const char *c, s21_size_t *max_size) {
       s21_strcpy(cpy_str, buf);
     }
   }
-
-  *(cpy_str + char_writed + a) = '\0';
+  char *begin_str = *str;
+  if (flag) {
+    *begin_str = '\0';
+  } else {
+    *(begin_str + char_writed + a) = '\0';
+  }
 
   free(buf);
 }
@@ -401,14 +413,12 @@ void process_uint(char *str, flags fl, va_list args, s21_size_t max_size) {
 int is_num(const char format) { return (format >= '0' && format <= '9'); }
 
 int is_specs(const char *format) {
-  int res = 0, res2 = 0;
+  int res = 0;
   const char specs[100] = {'c', 'd', 'f', 's', 'u', '%'};
-  const char flags[100] = {'+', '-', ' ', '.', '0', '1', '2',
-                           '3', '4', '5', '6', '7', '8', '9'};
-  res = s21_strcspn(format, specs);
-  res2 = s21_strcspn(format, flags);
 
-  return res | res2;
+  res = s21_strcspn(format, specs);
+
+  return res;
 }
 
 const char *parsing_flags(const char *format, flags *fl) {

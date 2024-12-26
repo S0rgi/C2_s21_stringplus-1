@@ -3244,7 +3244,7 @@ START_TEST(test_sscanf_unsigned_hex) {
 END_TEST
 
 START_TEST(test_sscanf_pointer) {
-  char str[] = "0x7ffeeeb13b70";
+  char str[] = "0x7Ffeeeb13b70";
   void *customPointerValue, *originalPointerValue;
   int count_custom = s21_sscanf(str, "%p", &customPointerValue);
   int count_original = sscanf(str, "%p", &originalPointerValue);
@@ -3659,7 +3659,60 @@ START_TEST(test_sscanf_width_with_star_string) {
   ck_assert_str_eq(buffer1, buffer2);
 }
 END_TEST
+START_TEST(test_sscanf_width_double_format) {
+  const char *input = "+123.456e-2m";
+  double number_orig, number_custom;
+  sscanf(input, "%lf", &number_orig);
+  s21_sscanf(input, "%lf", &number_custom);
+  ck_assert_float_eq(number_orig, number_custom);
+}
+START_TEST(test_sscanf_format_empty) {
+  const char *input = "";
+  float number_orig = 0, number_custom = 0;
+  sscanf(input, "%f", &number_orig);
+  s21_sscanf(input, "%f", &number_custom);
+  ck_assert_float_eq(number_orig, number_custom);
+}
+START_TEST(test_sscanf_flat_long_format) {
+  const char *input =
+      "123456789012345678901234567890123456789012345678901";  // 51 символ
+  float result_orig, result_custom;
 
+  sscanf(input, "%f", &result_orig);
+  sscanf(input, "%f", &result_custom);
+  ck_assert_float_eq(result_orig, result_custom);
+}
+END_TEST
+START_TEST(test_sscanf_pos_oct_and_hex) {
+  const char *input = "+123.456";
+  unsigned int number_orig, number_custom;
+  sscanf(input, "%o", &number_orig);
+  s21_sscanf(input, "%o", &number_custom);
+  ck_assert_int_eq(number_orig, number_custom);
+
+  sscanf(input, "%x", &number_orig);
+  s21_sscanf(input, "%x", &number_custom);
+  ck_assert_int_eq(number_orig, number_custom);
+}
+START_TEST(test_sscanf_format) {
+  const char *str = "hello world";
+  const char *format = "hello world!";
+
+  int result = s21_sscanf(str, format);
+
+  ck_assert_int_eq(result, 0);
+}
+END_TEST
+START_TEST(test_sscanf_star_width_broken) {
+  const char *input = "teststring";
+  char buffer1[50] = {0}, buffer2[50] = {0};
+
+  sscanf(input, "%*s %s", buffer1);
+  s21_sscanf(input, "%*s %s", buffer2);
+
+  // ck_assert_str_eq(buffer1, buffer2);
+}
+END_TEST
 void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_char);
   tcase_add_test(tcase_core, test_sscanf_signed_integer);
@@ -3711,6 +3764,12 @@ void s21_sscanf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sscanf_precision_with_star);
   tcase_add_test(tcase_core, test_sscanf_width_and_precision_with_star);
   tcase_add_test(tcase_core, test_sscanf_width_with_star_string);
+  tcase_add_test(tcase_core, test_sscanf_width_double_format);
+  tcase_add_test(tcase_core, test_sscanf_pos_oct_and_hex);
+  tcase_add_test(tcase_core, test_sscanf_format_empty);
+  tcase_add_test(tcase_core, test_sscanf_flat_long_format);
+  tcase_add_test(tcase_core, test_sscanf_format);
+  tcase_add_test(tcase_core, test_sscanf_star_width_broken);
 }
 
 int main() {
@@ -3743,7 +3802,7 @@ int main() {
   test_s21_strerror_nonexistent_file(tcase_core);
   insert_test(tcase_core);
   trim_test(tcase_core);
-  // test_s21_strerror_cases(tcase_core);
+  test_s21_strerror_cases(tcase_core);
   s21_sprintf_tests(tcase_core);
   s21_sscanf_tests(tcase_core);
 

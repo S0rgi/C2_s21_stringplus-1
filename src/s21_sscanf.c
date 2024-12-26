@@ -229,8 +229,7 @@ void process_f(va_list args, const char **str, int width, Options opt) {
     } else if (i < (int)sizeof(num) - 1) {
       num[i++] = **str;
       (*str)++;
-    } else
-      fail = 1;
+    }
   }
   if (i > 0) {
     num[i] = '\0';

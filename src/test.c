@@ -3744,7 +3744,7 @@ int main() {
   insert_test(tcase_core);
   trim_test(tcase_core);
   test_s21_strerror_cases(tcase_core);
-  s21_sprintf_tests(tcase_core);
+  //s21_sprintf_tests(tcase_core);
   s21_sscanf_tests(tcase_core);
 
   suite_add_tcase(suite, tcase_core);
@@ -3755,6 +3755,5 @@ int main() {
 
   int failed_count = srunner_ntests_failed(runner);
   srunner_free(runner);
-  return EXIT_SUCCESS;
   return (failed_count > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

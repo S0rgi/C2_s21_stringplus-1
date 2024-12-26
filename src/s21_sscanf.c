@@ -20,6 +20,7 @@ void process_u(va_list args, const char **str, int width, Options opt);
 void parce_width(const char **format, Options *opt);
 void process_percent(const char **str, const char **format);
 float s21_atof(const char *str);
+void skip_width(int width, const char **ptr);
 void *get_int_ptr(va_list args, Options opt);
 void *get_unsigned_int_ptr(va_list args, Options opt);
 void *get_float_ptr(va_list args, Options opt);
@@ -48,17 +49,10 @@ int s21_sscanf(const char *str, const char *format, ...) {
       }
       process_width(&format, &width);
       parce_width(&format, &opt);
-      if (skip) {
-        if (width != -1) {
-          ptr += width - 1;
-        } else {
-          while (*ptr && *ptr != ' ') {
-            ptr++;
-          }
-        }
-      } else {
+      if (skip)
+        skip_width(width, &ptr);
+      else
         spec_parse(&format, &ptr, args, width, str, &count, opt);
-      }
 
       while (*format && *format != ' ' && *format != '%') format++;
     } else {
@@ -71,6 +65,15 @@ int s21_sscanf(const char *str, const char *format, ...) {
   }
   va_end(args);
   return count;
+}
+void skip_width(int width, const char **ptr) {
+  if (width != -1) {
+    *(ptr) += width - 1;
+  } else {
+    while (**ptr && **ptr != ' ') {
+      (*ptr)++;
+    }
+  }
 }
 void parce_width(const char **format, Options *opt) {
   opt->h =

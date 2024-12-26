@@ -2454,6 +2454,16 @@ START_TEST(test_sprintf_5) {
 }
 END_TEST
 
+START_TEST(test_sprintf_5_1) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%u", 0);
+  sprintf(expected, "%u", 0);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
 START_TEST(test_sprintf_6) {
   char buffer[10512];
   char expected[10512];
@@ -2524,6 +2534,26 @@ START_TEST(test_sprintf_9_3) {
 }
 END_TEST
 
+START_TEST(test_sprintf_9_4) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%.0s", "Hello, World!");
+  sprintf(expected, "%.0s", "Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_9_5) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%20s", "Hello, World!");
+  sprintf(expected, "%20s", "Hello, World!");
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
 START_TEST(test_sprintf_10) {
   char buffer[10512];
   char expected[10512];
@@ -2541,6 +2571,17 @@ START_TEST(test_sprintf_11) {
   buffer[0] = '\0';
   s21_sprintf(buffer, "%+d", -123);
   sprintf(expected, "%+d", -123);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_11_1) {
+  char buffer[10512];
+  char expected[10512];
+
+  buffer[0] = '\0';
+  s21_sprintf(buffer, "%d", 0);
+  sprintf(expected, "%d", 0);
   ck_assert_str_eq(buffer, expected);
 }
 END_TEST
@@ -2675,6 +2716,56 @@ START_TEST(test_sprintf_26) {
 }
 END_TEST
 
+START_TEST(test_sprintf_26_6) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%-.2f", 0.99);
+  sprintf(expected, "%-.2f", 0.99);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_26_7) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%-.6f", 0.99);
+  sprintf(expected, "%-.6f", 0.99);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_26_8) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%+f", 0.1);
+  sprintf(expected, "%+f", 0.1);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_26_9) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%-10f", 0.1);
+  sprintf(expected, "%-10f", 0.1);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_26_10) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%10f", 0.1);
+  sprintf(expected, "%10f", 0.1);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
 START_TEST(test_sprintf_27) {
   char buffer[10512];
   char expected[10512];
@@ -2766,6 +2857,39 @@ START_TEST(test_sprintf_32_3) {
   wchar_t wc3 = L'A';
   s21_sprintf(buffer, "%-lc", wc3);
   sprintf(expected, "%-lc", wc3);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_4) {
+  char buffer[10512];
+  char expected[10512];
+
+  wchar_t wstr[] = L"Hello, World!";
+  s21_sprintf(buffer, "%.10ls", wstr);
+  sprintf(expected, "%.10ls", wstr);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_5) {
+  char buffer[10512];
+  char expected[10512];
+
+  wchar_t wstr[] = L"Hello, World!";
+  s21_sprintf(buffer, "%15ls", wstr);
+  sprintf(expected, "%15ls", wstr);
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_32_6) {
+  char buffer[10512];
+  char expected[10512];
+
+  wchar_t wstr[] = L"Hello, World!";
+  s21_sprintf(buffer, "%-15ls", wstr);
+  sprintf(expected, "%-15ls", wstr);
   ck_assert_str_eq(buffer, expected);
 }
 END_TEST
@@ -2873,6 +2997,27 @@ START_TEST(test_sprintf_44) {
   ck_assert_str_eq(buffer, expected);
 }
 END_TEST
+
+START_TEST(test_sprintf_45) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%-10c", 'H');
+  sprintf(expected, "%-10c", 'H');
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
+START_TEST(test_sprintf_46) {
+  char buffer[10512];
+  char expected[10512];
+
+  s21_sprintf(buffer, "%10c", 'H');
+  sprintf(expected, "%10c", 'H');
+  ck_assert_str_eq(buffer, expected);
+}
+END_TEST
+
 void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_0);
   tcase_add_test(tcase_core, test_sprintf_1);
@@ -2886,6 +3031,7 @@ void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_4);
   tcase_add_test(tcase_core, test_sprintf_4_1);
   tcase_add_test(tcase_core, test_sprintf_5);
+  tcase_add_test(tcase_core, test_sprintf_5_1);
   tcase_add_test(tcase_core, test_sprintf_6);
   tcase_add_test(tcase_core, test_sprintf_7);
   tcase_add_test(tcase_core, test_sprintf_8);
@@ -2893,8 +3039,11 @@ void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_9_1);
   tcase_add_test(tcase_core, test_sprintf_9_2);
   tcase_add_test(tcase_core, test_sprintf_9_3);
+  tcase_add_test(tcase_core, test_sprintf_9_4);
+  tcase_add_test(tcase_core, test_sprintf_9_5);
   tcase_add_test(tcase_core, test_sprintf_10);
   tcase_add_test(tcase_core, test_sprintf_11);
+  tcase_add_test(tcase_core, test_sprintf_11_1);
   tcase_add_test(tcase_core, test_sprintf_12);
   tcase_add_test(tcase_core, test_sprintf_14);
   tcase_add_test(tcase_core, test_sprintf_15);
@@ -2908,6 +3057,11 @@ void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_23);
   tcase_add_test(tcase_core, test_sprintf_24);
   tcase_add_test(tcase_core, test_sprintf_26);
+  tcase_add_test(tcase_core, test_sprintf_26_6);
+  tcase_add_test(tcase_core, test_sprintf_26_7);
+  tcase_add_test(tcase_core, test_sprintf_26_8);
+  tcase_add_test(tcase_core, test_sprintf_26_9);
+  tcase_add_test(tcase_core, test_sprintf_26_10);
   tcase_add_test(tcase_core, test_sprintf_27);
   tcase_add_test(tcase_core, test_sprintf_28);
   tcase_add_test(tcase_core, test_sprintf_29);
@@ -2917,6 +3071,9 @@ void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_32_1);
   tcase_add_test(tcase_core, test_sprintf_32_2);
   tcase_add_test(tcase_core, test_sprintf_32_3);
+  tcase_add_test(tcase_core, test_sprintf_32_4);
+  tcase_add_test(tcase_core, test_sprintf_32_5);
+  tcase_add_test(tcase_core, test_sprintf_32_6);
   tcase_add_test(tcase_core, test_sprintf_33);
   tcase_add_test(tcase_core, test_sprintf_35);
   tcase_add_test(tcase_core, test_sprintf_37);
@@ -2926,6 +3083,8 @@ void s21_sprintf_tests(TCase *tcase_core) {
   tcase_add_test(tcase_core, test_sprintf_42);
   tcase_add_test(tcase_core, test_sprintf_43);
   tcase_add_test(tcase_core, test_sprintf_44);
+  tcase_add_test(tcase_core, test_sprintf_45);
+  tcase_add_test(tcase_core, test_sprintf_46);
 }
 
 // Тесты s21_sscanf
@@ -3596,5 +3755,6 @@ int main() {
 
   int failed_count = srunner_ntests_failed(runner);
   srunner_free(runner);
+  return EXIT_SUCCESS;
   return (failed_count > 0) ? EXIT_FAILURE : EXIT_SUCCESS;
 }

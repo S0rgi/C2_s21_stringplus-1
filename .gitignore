@@ -54,3 +54,6 @@ dkms.conf
 #gcov files
 *.gc*
 *.info
+
+#vscode
+.vscode

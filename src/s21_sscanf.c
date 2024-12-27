@@ -21,8 +21,8 @@ int s21_sscanf(const char *str, const char *format, ...) {
       }
       process_width(&format, &width);
       parce_width(&format, &opt);
-      if (skip)
-        skip_width(width, &ptr);
+      if (skip && width != 1)
+        skip_width(&width, &ptr);
       else
         spec_parse(&format, &ptr, args, width, str, &count, opt);
 
@@ -38,9 +38,11 @@ int s21_sscanf(const char *str, const char *format, ...) {
   va_end(args);
   return count;
 }
-void skip_width(int width, const char **ptr) {
-  if (width != -1) {
-    *(ptr) += width - 1;
+void skip_width(int *width, const char **ptr) {
+  if (*width != -1) {
+    if (**ptr != '\0') {
+      *(ptr) += (*width) - 1;
+    }
   } else {
     while (**ptr && **ptr != ' ') {
       (*ptr)++;
@@ -60,7 +62,7 @@ void spec_parse(const char **format, const char **str, va_list args, int width,
   switch (**format) {
     case '%':
       process_percent(str, format);
-      count--;
+      (*count)--;
       break;
     case 'd':
       process_d(args, str, width, opt);
@@ -120,15 +122,17 @@ void process_percent(const char **str, const char **format) {
 
 void *get_int_ptr(va_list args, Options opt) {
   void *result;
-  if (opt.h == 2 || opt.h == 1) {
+  if (opt.h == 2)
+    result = va_arg(args, signed char *);
+  else if (opt.h == 1)
     result = va_arg(args, short *);
-  } else if (opt.l == 2) {
+  else if (opt.l == 2)
     result = va_arg(args, long long *);
-  } else if (opt.l == 1) {
+  else if (opt.l == 1)
     result = va_arg(args, long *);
-  } else {
+  else
     result = va_arg(args, int *);
-  }
+
   return result;
 }
 
@@ -156,27 +160,30 @@ void process_d(va_list args, const char **str, int width, Options opt) {
 
   result *= sign;
 
-  if (opt.h == 2 || opt.h == 1) {
+  if (opt.h == 2)
+    *(signed char *)int_ptr = (signed char)result;
+  else if (opt.h == 1)
     *(short *)int_ptr = (short)result;
-  } else if (opt.l == 2) {
+  else if (opt.l == 2)
     *(long long *)int_ptr = (long long)result;
-  } else if (opt.l == 1) {
+  else if (opt.l == 1)
     *(long *)int_ptr = (long)result;
-  } else {
+  else
     *(int *)int_ptr = (int)result;
-  }
 }
 
 void process_s(va_list args, const char **str, int width) {
   char *str_ptr = va_arg(args, char *);
+  if (str_ptr == s21_NULL) return;
   int i = 0;
-
-  while ((width == -1 || i < width) && **str != ' ' && **str != '\0' &&
-         i < 99) {
+  while ((width == -1 || i < width) && **str && *str && **str != '\0' &&
+         **str != ' ' && i < 99) {
     str_ptr[i++] = **str;
     (*str)++;
   }
-  str_ptr[i] = '\0';
+  if (i != 0) {
+    str_ptr[i] = '\0';
+  }
 }
 
 void *get_float_ptr(va_list args, Options opt) {
@@ -282,7 +289,9 @@ void *get_unsigned_int_ptr(va_list args, Options opt) {
 }
 void assign_unsigned_int_result(void *uint_ptr, unsigned long long result,
                                 Options opt) {
-  if (opt.h == 2 || opt.h == 1) {
+  if (opt.h == 2)
+    *(unsigned char *)uint_ptr = (unsigned char)result;
+  else if (opt.h == 1) {
     *(unsigned short *)uint_ptr = (unsigned short)result;
   } else if (opt.l == 2) {
     *(unsigned long long *)uint_ptr = (unsigned long long)result;
@@ -327,7 +336,7 @@ void process_x(va_list args, const char **str, int width, Options opt) {
 
   if (int_ptr == s21_NULL) return;
 
-  unsigned long long result = 0;  // Use unsigned long long to avoid overflow
+  unsigned long long result = 0;
   int sign = 1;
 
   if (**str == '-') {

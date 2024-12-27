@@ -22,7 +22,7 @@ void process_u(va_list args, const char **str, int width, Options opt);
 void parce_width(const char **format, Options *opt);
 void process_percent(const char **str, const char **format);
 float s21_atof(const char *str);
-void skip_width(int width, const char **ptr);
+void skip_width(int *width, const char **ptr);
 void *get_int_ptr(va_list args, Options opt);
 void *get_unsigned_int_ptr(va_list args, Options opt);
 void *get_float_ptr(va_list args, Options opt);

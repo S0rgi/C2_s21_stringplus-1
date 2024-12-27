@@ -44,7 +44,7 @@ void skip_width(int *width, const char **ptr) {
       *(ptr) += (*width) - 1;
     }
   } else {
-    while (**ptr && **ptr != ' ') {
+    while (**ptr != ' ' && *(*ptr + 1) != '\0') {
       (*ptr)++;
     }
   }

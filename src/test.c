@@ -3710,7 +3710,7 @@ START_TEST(test_sscanf_star_width_broken) {
   sscanf(input, "%*s %s", buffer1);
   s21_sscanf(input, "%*s %s", buffer2);
 
-  // ck_assert_str_eq(buffer1, buffer2);
+  ck_assert_str_eq(buffer1, buffer2);
 }
 END_TEST
 void s21_sscanf_tests(TCase *tcase_core) {

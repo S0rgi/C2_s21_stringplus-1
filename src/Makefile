@@ -60,9 +60,5 @@ clang:
 
 val: test
 	valgrind --tool=memcheck --leak-check=yes ./test.out
-
 lint:
 	s21lint *.c *.h
-scan:clean
-	gcc $(CFLAGS) -fsanitize=address s21_string.c s21_sscanf.c scan_test.c -o scan.out
-	./scan.out

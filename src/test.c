@@ -3464,8 +3464,8 @@ END_TEST
 
 START_TEST(test_sscanf_width_e) {
   float e_custom, e_standard;
-  sscanf("1.23e2", "%5e", &e_standard);
-  s21_sscanf("1.23e2", "%5e", &e_custom);
+  sscanf("1.23e2", "%6e", &e_standard);
+  s21_sscanf("1.23e2", "%6e", &e_custom);
   ck_assert_float_eq(e_custom, e_standard);
 }
 END_TEST

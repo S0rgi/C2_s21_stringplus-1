@@ -37,7 +37,7 @@ void *s21_memset(void *str, int c, s21_size_t n) {
   return str;
 }
 char *s21_strncat(char *dest, const char *src, s21_size_t n) {
-  if (src == NULL) {
+  if (src == s21_NULL) {
     // Не более одного выхода из функции. Исключение составляет предварительная
     // проверка аргументов функции.
     return dest;
@@ -212,7 +212,7 @@ char *s21_strtok(char *str, const char *delim) {
 
   if (!str) {
     if (!str_stat) {
-      return NULL;
+      return s21_NULL;
     } else {
       str = str_stat;
     }
@@ -222,7 +222,7 @@ char *s21_strtok(char *str, const char *delim) {
   token = str;
   str = s21_strpbrk(token, delim);
   if (!str) {
-    str_stat = NULL;
+    str_stat = s21_NULL;
   } else {
     *str = '\0';
     str_stat = str + 1;

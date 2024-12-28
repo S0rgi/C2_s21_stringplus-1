@@ -38,7 +38,7 @@ int s21_sscanf(const char *str, const char *format, ...) {
   va_end(args);
   return count;
 }
-void skip_width(int *width, const char **ptr) {
+void skip_width(const int *width, const char **ptr) {
   if (*width != -1) {
     if (**ptr != '\0') {
       *(ptr) += (*width) - 1;
@@ -176,8 +176,8 @@ void process_s(va_list args, const char **str, int width) {
   char *str_ptr = va_arg(args, char *);
   if (str_ptr == s21_NULL) return;
   int i = 0;
-  while ((width == -1 || i < width) && **str && *str && **str != '\0' &&
-         **str != ' ' && i < 99) {
+  while ((width == -1 || i < width) && **str && *str && **str != ' ' &&
+         i < 99) {
     str_ptr[i++] = **str;
     (*str)++;
   }

@@ -1,6 +1,6 @@
 #ifndef S21_STRING_H
 #define S21_STRING_H
-#include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 
 #include "s21_sprintf.h"
@@ -35,10 +35,8 @@ void *s21_to_upper(const char *str);
 void *s21_to_lower(const char *str);
 void *s21_insert(const char *src, const char *str, s21_size_t start_index);
 void *s21_trim(const char *src, const char *trim_chars);
-#include <errno.h>
-#include <stdlib.h>
 
-#if defined(__APPLE__)
+#if defined(__linux__)
 #define ERRORS                                                                 \
   {                                                                            \
     "Undefined error: 0", "Operation not permitted",                           \
@@ -94,7 +92,7 @@ void *s21_trim(const char *src, const char *trim_chars);
         "Interface output queue is full"                                       \
   }
 
-#elif defined(__linux__)
+#elif defined(__APPLE__)
 #define ERRORS                                                                 \
   {                                                                            \
     "Success", "Operation not permitted", "No such file or directory",         \

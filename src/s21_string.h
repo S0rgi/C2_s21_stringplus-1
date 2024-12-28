@@ -31,7 +31,7 @@ void *s21_trim(const char *src, const char *trim_chars);
 #include <errno.h>
 #include <stdlib.h>
 
-#if defined(__APPLE__)
+#if defined(__linux__)
 #define ERRORS                                                                 \
   {                                                                            \
     "Undefined error: 0", "Operation not permitted",                           \
@@ -87,7 +87,7 @@ void *s21_trim(const char *src, const char *trim_chars);
         "Interface output queue is full"                                       \
   }
 
-#elif defined(__linux__)
+#elif defined(__APPLE__)
 #define ERRORS                                                                 \
   {                                                                            \
     "Success", "Operation not permitted", "No such file or directory",         \
